@@ -1,0 +1,274 @@
+{
+  "version": 2,
+  "updated": "2026-07-03",
+  "purpose": "High-value task lanes where missing a specialized skill can noticeably reduce output quality. Use these lanes to search proactively even when the user does not know a skill name.",
+  "lanes": {
+    "academic_research": {
+      "label": "Academic research and paper writing",
+      "priority": "high",
+      "install_policy": "search-first-review-before-install",
+      "cache_days": 3,
+      "force_refresh_before_important_work": true,
+      "triggers": ["research paper", "academic paper", "论文", "科研", "文献综述", "literature review", "systematic review", "citation", "bibtex", "reviewer response", "rebuttal", "SCI", "IEEE", "arXiv", "conference paper", "journal paper"],
+      "queries": [
+        "academic research suite codex skill SKILL.md literature review citation paper reviewer",
+        "research paper writing codex skill SKILL.md abstract introduction related work revision",
+        "latex academic paper codex skill SKILL.md bibtex reviewer response",
+        "scientific writing agent skill codex SKILL.md research workflow"
+      ],
+      "curated_index_queries": [
+        "awesome academic writing codex skills SKILL.md literature citation",
+        "curated research paper agent skills SKILL.md"
+      ],
+      "seed_candidates": [
+        {
+          "repo": "Imbad0202/academic-research-skills-codex",
+          "skill_path": "skills/academic-research-suite",
+          "status": "review-first",
+          "why": "Codex-native Academic Research Skills suite; broad research pipeline. Check license and scope before installing."
+        },
+        {
+          "repo": "Master-cai/Research-Paper-Writing-Skills",
+          "skill_path": "research-paper-writing",
+          "status": "strong-candidate",
+          "why": "MIT skill package for ML/CV/NLP paper writing; useful for academic prose and claim-evidence checks."
+        },
+        {
+          "repo": "yunshenwuchuxun/latex-paper-skills",
+          "skill_path": ".",
+          "status": "review-first",
+          "why": "Modular LaTeX academic paper workflow; useful when the output should be a compiled paper project."
+        },
+        {
+          "repo": "renocrypt/latex-arxiv-SKILL",
+          "skill_path": ".",
+          "status": "review-first",
+          "why": "End-to-end arXiv/IEEE-style review paper workflow; narrower fit for ML/AI review articles."
+        }
+      ]
+    },
+    "latex_math_formula": {
+      "label": "LaTeX, formula handling, math notes, compiled documents",
+      "priority": "high",
+      "install_policy": "search-first-review-before-install",
+      "cache_days": 7,
+      "force_refresh_before_important_work": true,
+      "triggers": ["latex", "LaTeX", "公式", "math", "equation", "tikz", "bibtex", "theorem", "proof", "compile pdf", "IEEEtran", "Overleaf", "handwritten math", "数学笔记"],
+      "queries": [
+        "latex document skill codex SKILL.md formula equation tikz compile pdf",
+        "latex math notes codex skill SKILL.md theorem proof equation",
+        "academic latex paper skill codex SKILL.md IEEEtran bibtex",
+        "resume latex codex skill SKILL.md compile pdf ATS"
+      ],
+      "curated_index_queries": [
+        "awesome latex agent skills SKILL.md",
+        "curated latex codex skills formula bibtex"
+      ],
+      "seed_candidates": [
+        {
+          "repo": "ndpvt-web/latex-document-skill",
+          "skill_path": ".",
+          "status": "review-first",
+          "why": "Universal LaTeX document skill with templates/scripts; powerful but broad, so check description and safety before install."
+        },
+        {
+          "repo": "yunshenwuchuxun/latex-paper-skills",
+          "skill_path": ".",
+          "status": "review-first",
+          "why": "Academic LaTeX paper workflow with compilation prerequisites."
+        },
+        {
+          "repo": "renocrypt/latex-arxiv-SKILL",
+          "skill_path": ".",
+          "status": "review-first",
+          "why": "Narrow arXiv/IEEE ML review paper lane."
+        }
+      ]
+    },
+    "career_resume_job": {
+      "label": "Resume, CV, cover letter, job search, interview prep",
+      "priority": "high",
+      "install_policy": "search-first-review-before-install",
+      "cache_days": 3,
+      "force_refresh_before_important_work": true,
+      "triggers": ["resume", "CV", "简历", "cover letter", "求职", "实习", "job application", "ATS", "JD", "岗位", "面试", "interview", "LinkedIn", "career", "投递"],
+      "queries": [
+        "resume CV job application codex skill SKILL.md ATS tailored resume cover letter",
+        "tailored resume generator codex skill SKILL.md job description ATS",
+        "internship resume job search codex skill SKILL.md interview prep",
+        "latex resume codex skill SKILL.md ATS cover letter"
+      ],
+      "curated_index_queries": [
+        "awesome resume codex skills SKILL.md ATS",
+        "curated job application agent skills resume cover letter"
+      ],
+      "seed_candidates": [
+        {
+          "repo": "ComposioHQ/awesome-codex-skills",
+          "skill_path": "tailored-resume-generator",
+          "status": "strong-candidate",
+          "why": "Curated Codex skill for tailoring resumes to specific roles and ATS keywords."
+        },
+        {
+          "repo": "Paramchoudhary/ResumeSkills",
+          "skill_path": ".",
+          "status": "review-first",
+          "why": "Resume optimization, job applications, career development; verify Codex compatibility and skill structure."
+        },
+        {
+          "repo": "couragec/LLMInternSkill",
+          "skill_path": ".",
+          "status": "review-first",
+          "why": "Internship-focused resume and job-search skill; useful for CS/LLM internships if current and safe."
+        },
+        {
+          "repo": "apoorvdarshan/rekisei",
+          "skill_path": ".",
+          "status": "review-first",
+          "why": "LaTeX resume editing workflow; narrower than general resume tailoring."
+        }
+      ]
+    },
+    "graduate_application_materials": {
+      "label": "Graduate applications, SOP/PS, scholarship and recommendation materials",
+      "priority": "high",
+      "install_policy": "search-first-review-before-install",
+      "cache_days": 7,
+      "force_refresh_before_important_work": true,
+      "triggers": ["SOP", "PS", "personal statement", "statement of purpose", "申请文书", "港硕", "master application", "graduate application", "scholarship", "推荐信", "reference letter", "CV for application"],
+      "queries": [
+        "graduate application personal statement codex skill SKILL.md SOP CV",
+        "statement of purpose agent skill codex SKILL.md university application",
+        "application essay resume CV codex skill SKILL.md graduate school",
+        "academic CV personal statement codex skill SKILL.md scholarship recommendation"
+      ],
+      "curated_index_queries": [
+        "awesome graduate application skills SKILL.md personal statement",
+        "curated SOP personal statement agent skill"
+      ],
+      "seed_candidates": []
+    },
+    "document_artifacts": {
+      "label": "DOCX, PDF, XLSX, reports and formatted deliverables",
+      "priority": "medium-high",
+      "install_policy": "prefer-installed-core-then-search",
+      "cache_days": 7,
+      "force_refresh_before_important_work": false,
+      "triggers": ["docx", "Word", "PDF", "Excel", "xlsx", "spreadsheet", "report", "formatted document", "排版", "文档", "表格", "报告"],
+      "queries": [
+        "docx pdf xlsx report codex skill SKILL.md editable document",
+        "spreadsheet formula helper codex skill SKILL.md excel xlsx",
+        "paperjsx agent skill pptx docx xlsx pdf",
+        "pdf extraction annotation codex skill SKILL.md"
+      ],
+      "curated_index_queries": [
+        "awesome document artifact codex skills docx pdf xlsx SKILL.md",
+        "curated office automation agent skills pptx docx xlsx"
+      ],
+      "seed_candidates": [
+        {
+          "repo": "paperjsx/agent-skill",
+          "skill_path": ".",
+          "status": "review-first",
+          "why": "Structured generation of PPTX/DOCX/XLSX/PDF artifacts."
+        },
+        {
+          "repo": "ComposioHQ/awesome-codex-skills",
+          "skill_path": "spreadsheet-formula-helper",
+          "status": "review-first",
+          "why": "Useful for spreadsheet formula and Excel-like tasks."
+        },
+        {
+          "repo": "bowenliang123/markdown-exporter",
+          "skill_path": ".",
+          "status": "review-first",
+          "why": "Markdown export skill for PPTX, DOCX, HTML, and PDF with templates."
+        }
+      ]
+    },
+    "ppt_artifacts": {
+      "label": "PPTX, PowerPoint, slides, decks, and presentation workflows",
+      "priority": "high",
+      "install_policy": "curated-index-then-pinned-core-review",
+      "cache_days": 7,
+      "force_refresh_before_important_work": false,
+      "triggers": ["ppt", "pptx", "PowerPoint", "presentation", "slides", "deck", "幻灯片", "演示", "PPT"],
+      "queries": [
+        "pptx powerpoint codex skill SKILL.md editable deck",
+        "powerpoint agent skill SKILL.md pptx native editable",
+        "academic pptx skill SKILL.md thesis defense presentation",
+        "html slides codex skill SKILL.md export pptx pdf"
+      ],
+      "curated_index_queries": [
+        "awesome ai ppt codex skill SKILL.md",
+        "awesome powerpoint automation agent skills",
+        "curated AI PPT PowerPoint skill"
+      ],
+      "seed_candidates": [
+        {
+          "repo": "ningzimu/awesome-ai-ppt",
+          "skill_path": "skills/awesome-ai-ppt",
+          "status": "curated-index",
+          "why": "Focused curated index for AI PPT, PowerPoint automation, PPTX editing, and slide workflows; useful even with low stars because curation quality is the value."
+        },
+        {
+          "repo": "hugohe3/ppt-master",
+          "skill_path": "skills/ppt-master",
+          "status": "pinned-core",
+          "why": "High-signal native editable PowerPoint workflow for repeated PPTX creation/editing."
+        },
+        {
+          "repo": "zarazhangrui/frontend-slides",
+          "skill_path": ".",
+          "status": "strong-candidate",
+          "why": "High-star HTML slide skill useful when source-editable web slides and animation matter."
+        },
+        {
+          "repo": "Gabberflast/academic-pptx-skill",
+          "skill_path": ".",
+          "status": "review-first",
+          "why": "Academic PPTX skill focused on argument structure, chart discipline, and citation-aware slides."
+        }
+      ]
+    },
+    "skill_ecosystem_scan": {
+      "label": "Skill ecosystem scan / unknown useful skills",
+      "priority": "medium",
+      "install_policy": "index-only-do-not-bulk-install",
+      "cache_days": 7,
+      "force_refresh_before_important_work": true,
+      "triggers": ["best skills", "awesome skills", "不知道有哪些skill", "高star skill", "GitHub推荐", "github算法推荐", "skill marketplace", "skill registry", "精选集", "curated skill"],
+      "queries": [
+        "awesome codex skills github SKILL.md",
+        "awesome agent skills codex claude github SKILL.md",
+        "codex-skill GitHub topic high stars",
+        "agent skills registry codex SKILL.md"
+      ],
+      "curated_index_queries": [
+        "awesome codex skills github SKILL.md",
+        "awesome agent skills codex claude github SKILL.md",
+        "curated agent skill index SKILL.md"
+      ],
+      "seed_candidates": [
+        {
+          "repo": "ComposioHQ/awesome-codex-skills",
+          "skill_path": "index-only",
+          "status": "index-only",
+          "why": "Curated index of practical Codex skills; install individual folders only."
+        },
+        {
+          "repo": "VoltAgent/awesome-agent-skills",
+          "skill_path": "index-only",
+          "status": "index-only",
+          "why": "Large cross-agent skill index; useful for discovery, not bulk installation."
+        },
+        {
+          "repo": "ningzimu/awesome-ai-ppt",
+          "skill_path": "skills/awesome-ai-ppt",
+          "status": "curated-index",
+          "why": "Focused PPT index with an installable skill; use for presentation-tool discovery."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "updated": "2026-07-03",
+  "purpose": "Human- or community-curated skill/tool indexes. These are discovery sources, not bulk-install allowlists.",
+  "rules": {
+    "low_star_policy": "A low-star repository may be accepted as a curated index only when it has focused scope, clear categories, many relevant linked projects, curation language, update activity, license or reuse clarity, no high-risk findings, and ideally an installable SKILL.md.",
+    "install_policy": "Install only an index skill or an individually selected skill folder after review. Never bulk-install every linked repository.",
+    "individual_candidate_policy": "Skills found through an index must still pass normal relevance, structure, license, maintenance, and safety checks."
+  },
+  "indexes": [
+    {
+      "name": "awesome-ai-ppt",
+      "repo": "ningzimu/awesome-ai-ppt",
+      "repo_url": "https://github.com/ningzimu/awesome-ai-ppt",
+      "skill_path": "skills/awesome-ai-ppt",
+      "domains": ["pptx", "powerpoint", "slides", "presentation"],
+      "status": "curated-index",
+      "why": "Focused curated list for AI PPT, PowerPoint automation, PPTX editing, and slide workflow tools. Useful as a screening shortcut even when star count is low.",
+      "low_star_allowed": true,
+      "install_index_skill": true
+    },
+    {
+      "name": "awesome-codex-skills",
+      "repo": "ComposioHQ/awesome-codex-skills",
+      "repo_url": "https://github.com/ComposioHQ/awesome-codex-skills",
+      "skill_path": "index-only",
+      "domains": ["general", "resume", "spreadsheet", "developer-workflows"],
+      "status": "index-only",
+      "why": "Curated Codex skill index. Use it to find individual skill folders; do not install the whole index as a skill.",
+      "low_star_allowed": false,
+      "install_index_skill": false
+    },
+    {
+      "name": "awesome-agent-skills",
+      "repo": "VoltAgent/awesome-agent-skills",
+      "repo_url": "https://github.com/VoltAgent/awesome-agent-skills",
+      "skill_path": "index-only",
+      "domains": ["general", "agent-skills"],
+      "status": "index-only",
+      "why": "Large cross-agent skill index useful for discovery. Use individual candidates only after normal review.",
+      "low_star_allowed": false,
+      "install_index_skill": false
+    }
+  ]
+}

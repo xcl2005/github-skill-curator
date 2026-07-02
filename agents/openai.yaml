@@ -1,0 +1,6 @@
+interface:
+  display_name: "GitHub Skill Curator"
+  short_description: "Discovers, scores, installs, and governs high-quality GitHub Agent Skills for artifacts, research, LaTeX, resumes, and reusable workflows."
+  default_prompt: "Use $github-skill-curator to classify this task, check installed skills, search high-quality GitHub Agent Skills if needed, score candidates, and ask before installing."
+policy:
+  allow_implicit_invocation: true

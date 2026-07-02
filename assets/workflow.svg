@@ -1,0 +1,35 @@
+<svg width="1100" height="360" viewBox="0 0 1100 360" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">GitHub Skill Curator workflow</title>
+  <desc id="desc">The workflow checks local skills, searches GitHub, scores candidates, asks before installing, and audits the skill folder.</desc>
+  <rect width="1100" height="360" rx="24" fill="#F8FAFC"/>
+  <rect x="36" y="34" width="1028" height="292" rx="20" fill="#FFFFFF" stroke="#E2E8F0"/>
+  <g font-family="Inter, Segoe UI, Arial, sans-serif">
+    <text x="60" y="76" fill="#0F172A" font-size="28" font-weight="800">From task to trustworthy skill</text>
+    <text x="60" y="106" fill="#475569" font-size="16">A conservative routing gate for Codex Agent Skills.</text>
+  </g>
+  <g transform="translate(70 154)" font-family="Inter, Segoe UI, Arial, sans-serif">
+    <rect width="160" height="92" rx="16" fill="#EFF6FF" stroke="#93C5FD"/>
+    <text x="26" y="39" fill="#1D4ED8" font-size="18" font-weight="800">1. Classify</text>
+    <text x="25" y="66" fill="#475569" font-size="13">task terms and risk</text>
+    <path d="M176 46H218" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
+    <path d="M211 38L220 46L211 54" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="236" width="160" height="92" rx="16" fill="#ECFDF5" stroke="#86EFAC"/>
+    <text x="257" y="39" fill="#15803D" font-size="18" font-weight="800">2. Check local</text>
+    <text x="260" y="66" fill="#475569" font-size="13">installed skills first</text>
+    <path d="M412 46H454" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
+    <path d="M447 38L456 46L447 54" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="472" width="160" height="92" rx="16" fill="#FFF7ED" stroke="#FDBA74"/>
+    <text x="501" y="39" fill="#C2410C" font-size="18" font-weight="800">3. Search</text>
+    <text x="497" y="66" fill="#475569" font-size="13">GitHub and indexes</text>
+    <path d="M648 46H690" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
+    <path d="M683 38L692 46L683 54" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="708" width="160" height="92" rx="16" fill="#FDF2F8" stroke="#F9A8D4"/>
+    <text x="740" y="39" fill="#BE185D" font-size="18" font-weight="800">4. Score</text>
+    <text x="733" y="66" fill="#475569" font-size="13">fit, license, safety</text>
+    <path d="M884 46H926" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
+    <path d="M919 38L928 46L919 54" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="944" width="86" height="92" rx="16" fill="#F1F5F9" stroke="#CBD5E1"/>
+    <text x="964" y="39" fill="#334155" font-size="18" font-weight="800">Use</text>
+    <text x="961" y="66" fill="#475569" font-size="13">or audit</text>
+  </g>
+</svg>

@@ -1,0 +1,117 @@
+{
+  "version": 2,
+  "updated_hint": "Review monthly or before important artifact work.",
+  "builtin_capabilities": {
+    "pptx": [
+      {
+        "name": "presentations:Presentations",
+        "why": "Built-in editable PowerPoint / Google Slides deck creation and editing skill. Prefer for one-off or straightforward deck work."
+      }
+    ],
+    "docx": [
+      {
+        "name": "documents:documents",
+        "why": "Built-in DOCX / Word document creation, editing, redline, and visual QA skill."
+      }
+    ],
+    "pdf": [
+      {
+        "name": "pdf:pdf",
+        "why": "Built-in PDF extraction, rendering, inspection, creation, and verification skill."
+      }
+    ],
+    "xlsx": [
+      {
+        "name": "spreadsheets:Spreadsheets",
+        "why": "Built-in spreadsheet creation, analysis, formulas, charts, and formatting skill."
+      }
+    ]
+  },
+  "domains": {
+    "pptx": [
+      {
+        "name": "awesome-ai-ppt",
+        "repo": "ningzimu/awesome-ai-ppt",
+        "repo_url": "https://github.com/ningzimu/awesome-ai-ppt",
+        "skill_path": "skills/awesome-ai-ppt",
+        "install_scope": "user",
+        "status": "curated-index",
+        "license_hint": "CC0-1.0",
+        "low_star_allowed": true,
+        "why": "Curated AI PPT and PowerPoint automation index with an installable skill. Install as a discovery helper, not as proof that every linked project is approved."
+      },
+      {
+        "name": "ppt-master",
+        "repo": "hugohe3/ppt-master",
+        "repo_url": "https://github.com/hugohe3/ppt-master",
+        "skill_path": "skills/ppt-master",
+        "install_scope": "user",
+        "min_stars_hint": 10000,
+        "license_hint": "MIT",
+        "status": "pinned-core",
+        "why": "High-quality native editable PowerPoint workflow for repeated PPTX creation/editing tasks."
+      },
+      {
+        "name": "frontend-slides",
+        "repo": "zarazhangrui/frontend-slides",
+        "repo_url": "https://github.com/zarazhangrui/frontend-slides",
+        "skill_path": ".",
+        "install_scope": "user",
+        "status": "strong-candidate",
+        "why": "High-signal HTML-first slide skill for animated/source-editable web presentations and PowerPoint-to-web workflows."
+      },
+      {
+        "name": "academic-pptx-skill",
+        "repo": "Gabberflast/academic-pptx-skill",
+        "repo_url": "https://github.com/Gabberflast/academic-pptx-skill",
+        "skill_path": ".",
+        "install_scope": "user",
+        "status": "review-first",
+        "why": "Academic presentation skill focused on argument structure, action titles, chart discipline, citations, and PPTX output."
+      }
+    ],
+    "document_artifacts": [
+      {
+        "name": "markdown-exporter",
+        "repo": "bowenliang123/markdown-exporter",
+        "repo_url": "https://github.com/bowenliang123/markdown-exporter",
+        "skill_path": ".",
+        "install_scope": "user",
+        "status": "review-first",
+        "why": "Agent skill and CLI for exporting Markdown to PPTX, DOCX, HTML, and PDF with templates."
+      },
+      {
+        "name": "paperjsx-agent-skill",
+        "repo": "paperjsx/agent-skill",
+        "repo_url": "https://github.com/paperjsx/agent-skill",
+        "skill_path": ".",
+        "install_scope": "user",
+        "status": "review-first",
+        "why": "Structured generation of PPTX, DOCX, XLSX, and PDF artifacts; useful if it passes current structure and safety checks."
+      }
+    ],
+    "resume": [
+      {
+        "name": "tailored-resume-generator",
+        "repo": "ComposioHQ/awesome-codex-skills",
+        "repo_url": "https://github.com/ComposioHQ/awesome-codex-skills",
+        "skill_path": "tailored-resume-generator",
+        "install_scope": "user",
+        "status": "review-first",
+        "why": "Curated Codex skill for tailoring resumes against a target role and ATS-relevant keywords."
+      }
+    ],
+    "pptx_optional": [
+      {
+        "name": "pptx",
+        "repo": "anthropics/skills",
+        "repo_url": "https://github.com/anthropics/skills",
+        "skill_path": "skills/pptx",
+        "install_scope": "review-only",
+        "license_hint": "Check upstream license terms before use",
+        "status": "optional-review",
+        "why": "Strong PPTX workflow reference; install only if license and platform fit the user's environment."
+      }
+    ]
+  }
+}
