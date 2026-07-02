@@ -1,56 +1,72 @@
-<p align="center">
-  <img src="assets/hero.svg" alt="GitHub Skill Curator hero" width="100%">
-</p>
+<div align="center">
 
 # GitHub Skill Curator
 
-<p>
-  <a href="https://github.com/xcl2005/github-skill-curator/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/xcl2005/github-skill-curator?style=for-the-badge"></a>
-  <a href="https://github.com/xcl2005/github-skill-curator/blob/main/LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-blue?style=for-the-badge"></a>
-  <img alt="Codex skill" src="https://img.shields.io/badge/Codex-Agent%20Skill-24292f?style=for-the-badge">
-  <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge">
-</p>
+**Find better Codex Agent Skills without polluting your skill folder.**
 
-**A governance skill for discovering, scoring, installing, auditing, and pruning Codex Agent Skills from GitHub.**
+<a href="https://github.com/xcl2005/github-skill-curator/stargazers"><img src="https://img.shields.io/github/stars/xcl2005/github-skill-curator?style=flat-square" alt="stars"></a>
+<a href="https://github.com/xcl2005/github-skill-curator/network/members"><img src="https://img.shields.io/github/forks/xcl2005/github-skill-curator?style=flat-square" alt="forks"></a>
+<a href="https://github.com/xcl2005/github-skill-curator/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="license"></a>
+<img src="https://img.shields.io/badge/Codex-Agent%20Skill-111827?style=flat-square" alt="Codex Agent Skill">
+<img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square" alt="Python 3.10+">
 
-Use it when you want specialist agent skills, but you do not want random prompt bundles, stale scripts, or broad "do everything" instructions quietly taking over your Codex environment.
+English · [简体中文](README_ZH.md)
 
-**Search keywords:** Codex skills, Agent Skills, GitHub skill discovery, skill installer, skill governance, prompt safety, agent workflow, AI coding assistant, Codex CLI, Claude Code skills, skill lifecycle management.
+[Install](#install) · [Why](#why) · [Control Flow](#control-flow) · [Commands](#commands) · [Safety](#safety) · [Examples](examples/)
 
-## Why download it
+</div>
 
-Most agent-skill setups fail in one of two ways: they never discover the useful specialized skill, or they install too many noisy skills and make the agent worse. GitHub Skill Curator gives Codex a conservative middle path.
+## Why
 
-| You need | This skill gives you |
+Agent skills are powerful, but a messy skill folder makes Codex slower, noisier, and easier to misroute.
+
+**GitHub Skill Curator** is a governance layer for skill discovery. It checks local skills first, searches GitHub only when useful, scores candidates, asks before installation, and helps audit stale or risky skills later.
+
+## Highlights
+
+| | Capability |
 |---|---|
-| Find better Agent Skills on GitHub | Candidate search for repositories containing `SKILL.md` |
-| Avoid junk installs | Scoring by task fit, stars, forks, recency, license, structure, docs, and safety signals |
-| Keep Codex responsive | Local skills and built-in skills are checked before web search |
-| Support high-value work | Radar for academic writing, LaTeX, resumes, documents, PPTX, PDF, XLSX, and reports |
-| Clean up over time | Audit, disable, quarantine, restore, and prune workflows |
+| 🔎 | Discover Codex / Claude Code style skills that contain `SKILL.md` |
+| 🧭 | Route tasks to built-in, installed, or new skills with less guesswork |
+| 🧪 | Score candidates by task fit, stars, recency, license, docs, and structure |
+| 🛡️ | Flag broad prompts, secret access, destructive commands, and opaque installers |
+| 🧹 | Audit, disable, quarantine, restore, and prune local skills |
 
-<p align="center">
-  <img src="assets/workflow.svg" alt="GitHub Skill Curator workflow" width="100%">
-</p>
+## Control flow
 
-## What makes it different
+The skill is intentionally more like a router than a single command. It decides whether Codex should use a built-in skill, use an installed skill, search GitHub, install a new skill, or refuse a risky candidate.
 
-- **Governance-first:** it decides whether a skill is worth using before installing anything.
-- **Approval-first installs:** unknown third-party skills are presented with evidence before installation.
-- **Safety-aware scans:** flags secret access, destructive commands, opaque installers, obfuscated scripts, and overbroad triggers.
-- **Curated index support:** uses awesome lists as discovery sources, not as blind trust.
-- **Lifecycle management:** audits your skill folder and helps disable noisy or stale skills instead of deleting first.
+| Step | Decision | What happens |
+|---:|---|---|
+| 1 | Classify the task | Extract task terms such as `pptx`, `latex`, `resume`, `research`, `docx`, `pdf`, `testing`, or framework names. |
+| 2 | Check local skills | Inspect user-wide, repo-local, and configured skill folders before searching online. |
+| 3 | Decide freshness | Search only when the user asks for latest/best options, the task is high-value, or the local skill set is weak. |
+| 4 | Choose discovery lane | Use pinned core checks, high-value task radar, curated index search, or generic GitHub search. |
+| 5 | Score candidates | Compare relevance, stars, forks, update time, license, structure, docs, examples, and skill description quality. |
+| 6 | Scan risk | Flag suspicious instructions, broad triggers, secret access, destructive commands, and opaque installers. |
+| 7 | Ask before install | Show candidates and install only the selected skill folder after approval. |
+| 8 | Maintain lifecycle | Audit, disable, quarantine, restore, or prune skills as the local environment changes. |
 
-## Project links
+### Routing policy
 
-- [Examples](examples/) for real commands and task patterns.
-- [Contributing guide](CONTRIBUTING.md) for scoring, safety, and discovery improvements.
-- [Security policy](SECURITY.md) for reporting unsafe skill behavior.
-- [Governance guide](references/governance.md) for long-term skill lifecycle management.
+| Situation | Default route |
+|---|---|
+| Built-in/system skill is enough | Use it immediately |
+| Strong installed skill already matches | Use the installed skill |
+| Repeated artifact workflow such as PPTX/DOCX/PDF/XLSX | Check pinned core skills |
+| Academic writing, LaTeX, resumes, applications, reports | Run high-value task radar |
+| User asks for latest/best/high-star skill | Force fresh GitHub discovery |
+| Candidate is broad, stale, or risky | Reject, quarantine, or ask for explicit review |
+
+### Discovery lanes
+
+- **Pinned core lane:** stable reusable workflows such as editable PowerPoint generation.
+- **High-value task radar:** academic writing, literature review, LaTeX, resumes, graduate applications, DOCX/PDF/XLSX reports.
+- **Curated index lane:** awesome lists and curated collections used as discovery sources.
+- **Generic GitHub lane:** fallback search for repositories with `SKILL.md`.
+- **Lifecycle lane:** audit local skills and remove noise without deleting user work by default.
 
 ## Install
-
-Clone directly into your user-wide Codex skills folder:
 
 ```bash
 mkdir -p ~/.agents/skills
@@ -64,92 +80,83 @@ New-Item -ItemType Directory -Force -Path "$HOME\.agents\skills"
 git clone https://github.com/xcl2005/github-skill-curator.git "$HOME\.agents\skills\github-skill-curator"
 ```
 
-Restart Codex if the skill does not appear automatically.
+Restart Codex if the skill list does not refresh automatically.
 
-## Quick start
-
-Ask Codex:
-
-```text
-$github-skill-curator find the best current PowerPoint skill for editable slide decks
-```
-
-Run a high-value task radar:
+## Commands
 
 ```bash
-python scripts/task_skill_radar.py "tailor my CS internship resume to this job description"
-```
+# Find skill candidates
+python scripts/find_skills.py "PowerPoint PPTX editable presentation Codex skill" --top 8
 
-Force fresh discovery for important work:
+# Search curated indexes first
+python scripts/find_curated_indexes.py "AI presentation Codex skills" --top 8
 
-```bash
-python scripts/task_skill_radar.py "write and format an IEEE-style research paper" --run-search --force-refresh
-```
+# Classify a high-value task
+python scripts/task_skill_radar.py "tailor my CS internship resume to this JD"
 
-Audit installed skills:
-
-```bash
+# Audit installed skills
 python scripts/audit_skills.py audit --dest "$HOME/.agents/skills"
 ```
 
-## Core workflows
+## Files worth reading
 
-| Command | Purpose |
+| File | Purpose |
 |---|---|
-| `scripts/task_skill_radar.py` | Classify high-value tasks and decide whether skill search is worth it |
-| `scripts/find_skills.py` | Search GitHub for candidate Agent Skills |
-| `scripts/find_curated_indexes.py` | Find curated indexes and awesome lists |
-| `scripts/build_skill_roundup.py` | Build a reviewable shortlist when no index is strong enough |
-| `scripts/install_skill.py` | Install a selected skill folder after review |
-| `scripts/audit_skills.py` | Audit, disable, quarantine, restore, and prune local skills |
-| `scripts/ensure_core_skills.py` | Maintain pinned reusable skills for clear artifact workflows |
+| `SKILL.md` | Main operating policy and trigger description |
+| `references/scoring.md` | Candidate scoring rubric |
+| `references/governance.md` | Long-term skill lifecycle rules |
+| `references/high_value_discovery_lanes.json` | Task radar configuration |
+| `references/known_good_skills.json` | Pinned reusable skill candidates |
+| `scripts/install_skill.py` | Reviewable skill-folder installer |
 
-## Safety model
+## Safety
 
-This skill treats skill installation like a supply-chain decision:
+This skill treats installation like a reviewable dependency decision.
 
-```mermaid
-flowchart LR
-  A[User task] --> B[Check local skills]
-  B --> C{Need search?}
-  C -- No --> D[Use installed or built-in skill]
-  C -- Yes --> E[Search GitHub and indexes]
-  E --> F[Score fit, license, recency, docs]
-  F --> G[Scan safety signals]
-  G --> H{User approves install?}
-  H -- Yes --> I[Install selected skill folder]
-  H -- No --> J[Manual fallback or shortlist]
-  I --> K[Audit over time]
+It looks for:
+
+- overbroad descriptions such as "use for all tasks";
+- prompt-injection language;
+- secret or credential access patterns;
+- destructive shell commands;
+- opaque `curl | sh` style installers;
+- stale or overlapping skills.
+
+It does not prove third-party code is safe. It makes the review visible before the install.
+
+## Good for
+
+- Codex users building a reusable skill stack.
+- Developers looking for task-specific agent workflows.
+- People who work with PPTX, DOCX, PDF, XLSX, LaTeX, resumes, research, reports, and codebase automation.
+- Anyone who wants skill discovery without turning GitHub search into copy-paste roulette.
+
+## Project quality checks
+
+This repository includes a README quality gate:
+
+```bash
+python scripts/validate_readme_quality.py
 ```
 
-It does not claim a third-party skill is "safe." It reports that a candidate looks acceptable based on scanned files, and keeps the final decision reviewable.
+The check blocks oversized README images, Mermaid flowcharts, stale hero assets, and missing install/safety sections.
 
 ## Repository layout
 
 ```text
-github-skill-curator/
+.
 |-- SKILL.md
-|-- README.md
-|-- agents/
-|-- references/
 |-- scripts/
-|-- assets/
-`-- LICENSE
+|-- references/
+|-- examples/
+|-- agents/
+`-- README.md
 ```
 
-## Best for
+## Search keywords
 
-- Codex users who install multiple Agent Skills.
-- Teams building reusable agent workflows.
-- People working with PPTX, DOCX, PDF, XLSX, LaTeX, academic writing, resumes, reports, or codebase automation.
-- Anyone who wants better skills without turning skill discovery into a risky copy-paste habit.
-
-## Suggested GitHub topics
-
-For maximum discoverability, use these topics on GitHub:
-
-`codex`, `codex-skills`, `agent-skills`, `skill-discovery`, `skill-governance`, `ai-agents`, `prompt-safety`, `github`, `python`, `developer-tools`
+Codex skills, Agent Skills, GitHub skill discovery, skill governance, skill installer, prompt safety, AI agents, Claude Code skills, Codex CLI, developer tools.
 
 ## License
 
-MIT. Use it, fork it, adapt it, and keep the skill ecosystem cleaner than you found it.
+MIT
