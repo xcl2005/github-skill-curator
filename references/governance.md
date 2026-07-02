@@ -38,6 +38,17 @@ Policy: do not auto-install. Search, score, compare, and ask before installing.
 | General workflow used across projects | Install user-wide under `~/.agents/skills` |
 | Candidate has high-risk findings | Reject or quarantine; do not auto-install |
 
+### Post-install use policy
+
+Installing a skill is not the finish line. If the user approved an install because the current skill set was missing, weak, stale, or lower quality, the newly installed skill should be used immediately for the current task when it matches.
+
+| Case | Policy |
+|---|---|
+| Install succeeds and task still matches | Read the installed `SKILL.md` and continue the task with that skill |
+| Agent cannot hot-load the new skill | Read the installed file directly for this turn, then give the exact future invocation |
+| User asked only to install | Stop after verification and invocation guidance |
+| Installed skill is mismatched or risky | Do not invoke; explain and recommend disable/quarantine/removal |
+
 ### Freshness policy
 
 | Task type | Suggested refresh |

@@ -19,7 +19,7 @@ The right behavior is:
 1. Check whether the pinned/core skill is installed.
 2. If missing, verify the current upstream repository quickly.
 3. Install the pinned skill if it still passes safety and provenance checks.
-4. After installation, use the installed skill directly for future tasks.
+4. After installation, read the installed `SKILL.md` and use the installed skill for the current task when it matches.
 5. Recheck upstream periodically, not on every task.
 
 This is different from vague or one-off tasks. For vague tasks, conservative search and user confirmation are still preferred.

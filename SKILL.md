@@ -1,11 +1,11 @@
 ---
 name: github-skill-curator
-description: Skill procurement and routing gate for Codex Agent Skills. Use when the user asks to find, compare, install, update, audit, disable, remove, or curate skills; asks for better, latest, high-star, GitHub-recommended, awesome-list, or reusable skills; or when a high-value repeated artifact workflow such as PPTX, DOCX, PDF, spreadsheets, LaTeX, academic writing, resumes, or reports may benefit from a specialized skill beyond built-in capabilities. It checks built-in and installed skills first, searches pinned core skills and curated indexes when useful, scores candidates by relevance, evidence, stars, recency, license, structure, curation quality, and safety, and asks before installing unknown third-party skills.
+description: Skill procurement and routing gate for Agent Skills. Use when the user asks to find, compare, install, update, audit, disable, remove, or curate Codex / Claude Code skills; asks for better, latest, high-star, GitHub-recommended, awesome-list, or reusable skills; or when a high-value repeated artifact workflow such as PPTX, DOCX, PDF, spreadsheets, LaTeX, academic writing, resumes, or reports may benefit from a specialized skill beyond built-in capabilities. It checks built-in and installed skills first, searches pinned core skills and curated indexes when useful, scores candidates by relevance, evidence, stars, recency, license, structure, curation quality, and safety, and asks before installing unknown third-party skills.
 ---
 
 # GitHub Skill Curator
 
-This is a governance skill for skill procurement, routing, and lifecycle management. Its job is not to replace built-in Codex skills by default; it helps decide when built-in skills are enough, when an installed skill should be used, and when it is worth finding or installing a better specialized skill.
+This is a governance skill for skill procurement, routing, and lifecycle management. Its job is not to replace built-in agent skills by default; it helps decide when built-in skills are enough, when an installed skill should be used, and when it is worth finding or installing a better specialized skill.
 
 ## Operating principle
 
@@ -120,7 +120,29 @@ For PPTX specifically, `ppt-master` is a pinned core candidate because it is hig
 
 ## Important limitation
 
-Implicit invocation is best-effort. Codex chooses skills by matching the task against each skill's `description`; it may not call this skill every time unless the user explicitly invokes `$github-skill-curator` or global/project `AGENTS.md` guidance tells Codex to check skills before complex tasks.
+Implicit invocation is best-effort. Codex and Claude Code choose skills by matching the task against each skill's `description`; they may not call this skill every time unless the user explicitly invokes it or global/project guidance tells the agent to check skills before complex tasks.
+
+Direct invocation differs by agent:
+
+- Codex: `$github-skill-curator ...`
+- Claude Code: `/github-skill-curator ...`
+
+## Post-install invocation guarantee
+
+When the user approves installing a skill, treat that approval as intent to use the installed skill for the current task unless the user explicitly asked only to install or archive it.
+
+After a successful install:
+
+1. Read the installed skill's `SKILL.md` from the destination path immediately.
+2. Verify that its `name`, `description`, and body still match the user's current task.
+3. If it matches and has no high-risk findings, apply it to the user's original task in the same turn.
+4. If the current agent surface cannot hot-load new skills, still read the installed file directly and follow its instructions for this task when safe.
+5. Tell the user the exact future invocation:
+   - Codex: `$<skill-name> <task>`
+   - Claude Code: `/<skill-name> <task>`
+6. Do not invoke the skill if it proves mismatched, unsafe, overbroad, or impossible to use in the current environment; explain the reason and suggest disable/quarantine/removal.
+
+The point of installation is not collecting skills. It is improving the current and future workflow with the selected skill.
 
 ## Default install locations
 
@@ -130,6 +152,14 @@ Prefer the current Codex locations:
 - Repository/project skills: `$CWD/.agents/skills` or `$REPO_ROOT/.agents/skills`
 
 Honor `CODEX_SKILLS_DIR` when set. If an older `~/.codex/skills` folder exists, mention that current Codex docs prefer `~/.agents/skills`, but offer to inspect or migrate only after user approval.
+
+For Claude Code:
+
+- User-wide skills: `$HOME/.claude/skills`
+- Repository/project skills: `$CWD/.claude/skills` or `$REPO_ROOT/.claude/skills`
+- Direct invocation uses slash syntax: `/<skill-name> <task>`
+
+Claude.ai and Claude API custom skills are usually uploaded or registered rather than cloned into these local folders. Use the local paths above for Claude Code.
 
 ## Workflow
 
@@ -273,16 +303,24 @@ Show:
 Use:
 
 ```bash
-python3 scripts/install_skill.py https://github.com/OWNER/REPO --skill-path path/to/skill
+python3 scripts/install_skill.py https://github.com/OWNER/REPO --skill-path path/to/skill --agent codex
+```
+
+For Claude Code:
+
+```bash
+python3 scripts/install_skill.py https://github.com/OWNER/REPO --skill-path path/to/skill --agent claude
 ```
 
 Rules:
 
 - Install only the selected skill folder, not the whole repository, when possible.
-- Default to `$HOME/.agents/skills` for generally useful skills.
-- Use repo-local `.agents/skills` for project-specific workflows.
+- Default to `$HOME/.agents/skills` for generally useful Codex skills.
+- Default to `$HOME/.claude/skills` for generally useful Claude Code skills.
+- Use repo-local `.agents/skills` or `.claude/skills` for project-specific workflows.
 - Preserve a timestamped backup if a destination already exists.
 - Write an entry to the local curator registry when installation succeeds.
+- After installation, read and use the installed skill for the current task unless the user only wanted installation or the verification step fails.
 
 ### 8. Verify installation
 
@@ -299,7 +337,7 @@ Confirm:
 - The description is specific enough not to hijack unrelated tasks.
 - Any scripts are understandable and task-relevant.
 
-Codex usually detects skill changes automatically; restart Codex only if the skill does not appear.
+Codex and Claude Code usually detect skill changes in watched directories, but current sessions can still miss a newly created top-level skill directory. If the skill does not appear, restart or reload the agent and use the exact direct invocation printed by the installer.
 
 ## Skill lifecycle management
 

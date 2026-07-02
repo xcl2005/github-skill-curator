@@ -18,7 +18,11 @@ ROOT = Path(__file__).resolve().parents[1]
 ALLOWLIST = ROOT / "references" / "known_good_skills.json"
 
 
-def default_dest() -> Path:
+def default_dest(agent: str = "codex") -> Path:
+    if agent == "claude":
+        if os.environ.get("CLAUDE_SKILLS_DIR"):
+            return Path(os.environ["CLAUDE_SKILLS_DIR"]).expanduser()
+        return Path.home() / ".claude" / "skills"
     if os.environ.get("CODEX_SKILLS_DIR"):
         return Path(os.environ["CODEX_SKILLS_DIR"]).expanduser()
     return Path.home() / ".agents" / "skills"
@@ -53,8 +57,9 @@ def installed_skill_names(dest: Path) -> set[str]:
 def main() -> int:
     ap = argparse.ArgumentParser(description="Check or install pinned core skills for reusable artifact tasks.")
     ap.add_argument("domain", nargs="?", default="pptx", help="Domain key from references/known_good_skills.json, e.g. pptx")
-    ap.add_argument("--dest", default=str(default_dest()), help="Destination skills directory")
+    ap.add_argument("--dest", help="Destination skills directory. Defaults to ~/.agents/skills for Codex or ~/.claude/skills for Claude Code")
     ap.add_argument("--install", action="store_true", help="Install missing pinned core skills")
+    ap.add_argument("--agent", choices=["codex", "claude"], default="codex", help="Agent target to pass to install_skill.py")
     ap.add_argument("--prefer-external-core", action="store_true", help="Treat missing external pinned skills as missing even when a built-in capability exists")
     ap.add_argument("--yes", action="store_true", help="Pass --yes to install_skill.py")
     args = ap.parse_args()
@@ -67,7 +72,7 @@ def main() -> int:
         print("Available domains:", ", ".join(sorted(data.get("domains", {}).keys())))
         return 2
 
-    dest = Path(args.dest).expanduser()
+    dest = Path(args.dest).expanduser() if args.dest else default_dest(args.agent)
     installed = installed_skill_names(dest)
     builtins = builtin_capabilities(data, domain)
     missing = []
@@ -91,7 +96,7 @@ def main() -> int:
         if not present:
             if args.prefer_external_core or args.install or not builtins:
                 missing.append(s)
-            cmd = f"python3 scripts/install_skill.py {s['repo_url']} --skill-path {s['skill_path']}"
+            cmd = f"python3 scripts/install_skill.py {s['repo_url']} --skill-path {s['skill_path']} --agent {args.agent}"
             print(f"  install: {cmd}")
         print()
 
@@ -108,7 +113,7 @@ def main() -> int:
 
     installer = ROOT / "scripts" / "install_skill.py"
     for s in missing:
-        cmd = [sys.executable, str(installer), s["repo_url"], "--skill-path", s["skill_path"], "--dest", str(dest)]
+        cmd = [sys.executable, str(installer), s["repo_url"], "--skill-path", s["skill_path"], "--dest", str(dest), "--agent", args.agent]
         if args.yes:
             cmd.append("--yes")
         print("Running:", " ".join(cmd))

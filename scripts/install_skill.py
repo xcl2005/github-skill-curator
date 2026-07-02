@@ -48,10 +48,30 @@ def parse_repo_url(url: str) -> str:
     return f"https://github.com/{parts[0]}/{parts[1]}"
 
 
-def default_dest() -> Path:
+def default_codex_dest() -> Path:
     if os.environ.get("CODEX_SKILLS_DIR"):
         return Path(os.environ["CODEX_SKILLS_DIR"]).expanduser()
     return Path.home() / ".agents" / "skills"
+
+
+def default_claude_dest() -> Path:
+    if os.environ.get("CLAUDE_SKILLS_DIR"):
+        return Path(os.environ["CLAUDE_SKILLS_DIR"]).expanduser()
+    return Path.home() / ".claude" / "skills"
+
+
+def resolve_dest_targets(agent: str, dest: str | None) -> list[tuple[str, Path]]:
+    if dest:
+        if agent == "both":
+            raise ValueError("--agent both cannot be combined with --dest; omit --dest or run codex/claude separately.")
+        return [(agent, Path(dest).expanduser())]
+    if agent == "codex":
+        return [("codex", default_codex_dest())]
+    if agent == "claude":
+        return [("claude", default_claude_dest())]
+    if agent == "both":
+        return [("codex", default_codex_dest()), ("claude", default_claude_dest())]
+    raise ValueError(f"Unknown agent target: {agent}")
 
 
 def read_text(path: Path, limit: int = 200_000) -> str:
@@ -154,11 +174,12 @@ def save_registry(dest_root: Path, registry: dict) -> None:
     (dest_root / REGISTRY).write_text(json.dumps(registry, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def record_install(dest_root: Path, dest: Path, repo_url: str, skill_path: str, commit: str, findings: list[str]) -> None:
+def record_install(dest_root: Path, dest: Path, repo_url: str, skill_path: str, commit: str, findings: list[str], agent: str) -> None:
     registry = load_registry(dest_root)
     installs = registry.setdefault("installs", [])
     entry = {
         "name": dest.name,
+        "agent": agent,
         "destination": str(dest),
         "repo_url": repo_url,
         "skill_path": skill_path,
@@ -167,6 +188,10 @@ def record_install(dest_root: Path, dest: Path, repo_url: str, skill_path: str, 
         "status": "active",
         "risk_count": len(findings),
         "risk_findings": findings[:20],
+        "invocation": {
+            "codex": f"Use ${dest.name} to <task>",
+            "claude_code": f"/{dest.name} <task>",
+        },
     }
     installs = [x for x in installs if not (x.get("name") == dest.name and x.get("destination") == str(dest))]
     installs.append(entry)
@@ -174,11 +199,32 @@ def record_install(dest_root: Path, dest: Path, repo_url: str, skill_path: str, 
     save_registry(dest_root, registry)
 
 
+def print_post_install_guidance(installed: list[tuple[str, Path]]) -> None:
+    if not installed:
+        return
+    skill_name = installed[0][1].name
+    print()
+    print("Next use:")
+    for agent, dest in installed:
+        if agent == "codex":
+            print(f"  Codex: Use ${skill_name} to <your task>")
+            print(f"         Installed at: {dest}")
+        elif agent == "claude":
+            print(f"  Claude Code: /{skill_name} <your task>")
+            print(f"               Installed at: {dest}")
+        else:
+            print(f"  {agent}: {skill_name} at {dest}")
+    print()
+    print("Curator policy: because this install was approved, read the installed SKILL.md now and use it for the current task when it matches.")
+    print("If the current session does not see the new skill automatically, restart or reload the agent and use the exact invocation above.")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Install one selected Agent Skill folder from GitHub.")
     ap.add_argument("repo", help="GitHub repo URL or OWNER/REPO")
     ap.add_argument("--skill-path", default=".", help="Path inside the repo that contains SKILL.md")
-    ap.add_argument("--dest", default=str(default_dest()), help="Destination skills directory")
+    ap.add_argument("--agent", choices=["codex", "claude", "both"], default="codex", help="Which local agent skill location to target")
+    ap.add_argument("--dest", help="Destination skills directory. Defaults to ~/.agents/skills for Codex or ~/.claude/skills for Claude Code")
     ap.add_argument("--name", help="Override installed folder name")
     ap.add_argument("--yes", action="store_true", help="Proceed without interactive confirmation")
     ap.add_argument("--force", action="store_true", help="Replace existing destination after backup")
@@ -186,7 +232,7 @@ def main() -> int:
     args = ap.parse_args()
 
     repo_url = parse_repo_url(args.repo)
-    dest_root = Path(args.dest).expanduser()
+    dest_targets = resolve_dest_targets(args.agent, args.dest)
 
     with tempfile.TemporaryDirectory(prefix="skill-install-") as td:
         work = Path(td) / "repo"
@@ -204,6 +250,8 @@ def main() -> int:
                     print(" -", p)
             return 2
 
+        source_name, _ = validate_skill_folder(src)
+        skill_name = args.name or source_name
         commit = git_commit(work)
         findings = [] if args.skip_safety_scan else scan_folder(src)
         if findings:
@@ -217,17 +265,23 @@ def main() -> int:
                     return 1
 
         if not args.yes:
-            print(f"About to install {src.relative_to(work)} into {dest_root}")
+            print(f"About to install {src.relative_to(work)} as {skill_name!r} into:")
+            for agent, dest_root in dest_targets:
+                print(f" - {agent}: {dest_root}")
             ans = input("Type 'yes' to continue: ").strip().lower()
             if ans != "yes":
                 print("Installation cancelled.")
                 return 1
 
-        dest = copy_skill(src, dest_root, args.name, args.force)
-        record_install(dest_root, dest, repo_url, args.skill_path, commit, findings)
-        print(f"Installed skill to: {dest}")
-        print("Verify with:")
-        print(f"  head -40 {dest / 'SKILL.md'}")
+        installed: list[tuple[str, Path]] = []
+        for agent, dest_root in dest_targets:
+            dest = copy_skill(src, dest_root, args.name, args.force)
+            record_install(dest_root, dest, repo_url, args.skill_path, commit, findings, agent)
+            installed.append((agent, dest))
+            print(f"Installed skill to: {dest}")
+            print("Verify with:")
+            print(f"  head -40 {dest / 'SKILL.md'}")
+        print_post_install_guidance(installed)
         return 0
 
 if __name__ == "__main__":

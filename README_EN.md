@@ -1,0 +1,204 @@
+<div align="center">
+
+# GitHub Skill Curator
+
+**Find better Agent Skills for Codex / Claude Code without polluting your skill folder.**
+
+<a href="https://github.com/xcl2005/github-skill-curator/stargazers"><img src="https://img.shields.io/github/stars/xcl2005/github-skill-curator?style=flat-square" alt="GitHub stars"></a>
+<a href="https://github.com/xcl2005/github-skill-curator/network/members"><img src="https://img.shields.io/github/forks/xcl2005/github-skill-curator?style=flat-square" alt="GitHub forks"></a>
+<a href="https://github.com/xcl2005/github-skill-curator/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT license"></a>
+<img src="https://img.shields.io/badge/Agent%20Skills-Codex%20%7C%20Claude-111827?style=flat-square" alt="Agent Skills for Codex and Claude">
+<img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square" alt="Python 3.10+">
+<img src="https://img.shields.io/badge/Install-Review%20First-0F766E?style=flat-square" alt="Review before install">
+
+[简体中文](README.md) · English
+
+[Quick Start](#-quick-start) · [Why](#-why) · [Highlights](#-highlights) · [Codex / Claude](#-codex--claude-code) · [Post-install Use](#-post-install-use) · [Safety](#-safety)
+
+</div>
+
+## 🔥 Positioning
+
+This repository is a skill procurement, routing, and governance layer. It checks local skills first, decides whether GitHub search is worth it, scores candidates, scans risk, shows reviewable options, and installs only the selected skill folder after approval.
+
+It is not only for Codex users. The shared Agent Skills structure is `skill-name/SKILL.md` plus optional `scripts/`, `references/`, and `assets/`. Codex and Claude Code mainly differ in install paths and direct invocation syntax.
+
+## ✨ Why
+
+Agent Skills are powerful, but a messy skill folder makes agents slower, noisier, and easier to misroute through overbroad `description` fields.
+
+**GitHub Skill Curator** helps answer three questions:
+
+| Question | Curator behavior |
+|---|---|
+| Is an existing skill enough? | Check built-in, user-level, and project-level skills first |
+| Is there a better GitHub skill? | Search only for high-value, repeated, latest/high-star, or locally unsupported work |
+| Will the installed skill actually be used? | After approval and successful install, read the new skill and use it for the current task by default |
+
+## 👨‍💻 Use Cases
+
+| Scenario | Default route |
+|---|---|
+| Repeated PPTX / DOCX / PDF / XLSX artifact workflows | Check pinned core skills first |
+| Academic writing, LaTeX, resumes, application materials | Run the high-value task radar |
+| User asks for latest / best / high-star / GitHub-recommended options | Force a fresh GitHub search |
+| Installed skill is broad, stale, or mis-invoked | Audit, disable, quarantine, or replace |
+| Low-value one-off task | Do the task directly; do not install just in case |
+
+## 🎯 Highlights
+
+| | Capability |
+|---|---|
+| 🔎 | Discover repositories with `SKILL.md` for Codex, Claude Code, and Agent Skills-style workflows |
+| 🧭 | Route between built-in skills, installed skills, GitHub search, install, and rejection |
+| ⭐ | Score candidates by task fit, stars, forks, maintenance, license, structure, docs, and examples |
+| 🛡️ | Flag broad triggers, secret access, destructive commands, prompt injection, and opaque installers |
+| 📦 | Install only the selected skill folder, not an entire unrelated repository |
+| 🔁 | Print exact Codex / Claude Code invocation after installation |
+
+## 📦 Quick Start
+
+### Codex
+
+```bash
+mkdir -p ~/.agents/skills
+git clone https://github.com/xcl2005/github-skill-curator.git ~/.agents/skills/github-skill-curator
+```
+
+Windows PowerShell:
+
+```powershell
+New-Item -ItemType Directory -Force -Path "$HOME\.agents\skills"
+git clone https://github.com/xcl2005/github-skill-curator.git "$HOME\.agents\skills\github-skill-curator"
+```
+
+Invocation:
+
+```text
+Use $github-skill-curator to find a high-quality reusable PPTX skill and explain whether it is worth installing.
+```
+
+### Claude Code
+
+```bash
+mkdir -p ~/.claude/skills
+git clone https://github.com/xcl2005/github-skill-curator.git ~/.claude/skills/github-skill-curator
+```
+
+Direct invocation:
+
+```text
+/github-skill-curator find a high-quality reusable PPTX skill and install it if approved
+```
+
+### Install a candidate skill
+
+```bash
+# Install to Codex's default location
+python scripts/install_skill.py owner/repo --skill-path path/to/skill --agent codex
+
+# Install to Claude Code's default location
+python scripts/install_skill.py owner/repo --skill-path path/to/skill --agent claude
+
+# Install to both default locations
+python scripts/install_skill.py owner/repo --skill-path path/to/skill --agent both
+```
+
+## 🔁 Codex / Claude Code
+
+| Item | Codex | Claude Code |
+|---|---|---|
+| Shared structure | `skill-name/SKILL.md`, optionally with `scripts/`, `references/`, `assets/` | Same |
+| User-level path | `~/.agents/skills/<skill-name>` | `~/.claude/skills/<skill-name>` |
+| Project-level path | `.agents/skills/<skill-name>` | `.claude/skills/<skill-name>` |
+| Automatic trigger | Matches the `description` to the task | Matches the `description` to the task |
+| Direct invocation | `$skill-name ...` | `/skill-name ...` |
+| Installer flag | `--agent codex` | `--agent claude` |
+
+Claude.ai / Claude API custom skills are usually uploaded as a zip or registered through the Skills API. The clone commands in this repository are mainly for local Codex and Claude Code workflows.
+
+## 🚀 Post-install Use
+
+When the user approves installing a skill, that usually means the current skill set is missing, stale, or worse than the candidate. After a successful install, the default behavior is:
+
+| Situation | Behavior |
+|---|---|
+| The current task still matches the new skill | Read the installed `SKILL.md` immediately and continue the task with it |
+| The current agent cannot hot-load new skills | Print the exact path and the next invocation command |
+| The user only asked to install, not execute | Install and print verification commands only |
+| The skill proves mismatched or risky after install | Do not invoke it; explain why and suggest disable/remove steps |
+
+The installer prints commands like:
+
+```text
+Codex: Use $skill-name to ...
+Claude Code: /skill-name ...
+```
+
+## 🧭 Control Flow
+
+| Step | Decision | What happens |
+|---:|---|---|
+| 1 | Classify the task | Extract terms such as `pptx`, `latex`, `resume`, `research`, `docx`, `pdf`, or framework names |
+| 2 | Check local skills | Inspect user-level, project-level, and configured skill directories |
+| 3 | Decide freshness | Search only when the user asks for latest/best, the task is high-value, or local skills are weak |
+| 4 | Choose discovery lane | Use pinned core, high-value task radar, curated index, or generic GitHub search |
+| 5 | Score candidates | Compare relevance, stars, forks, update time, license, structure, docs, and trigger description |
+| 6 | Scan risk | Check prompt injection, secret access, destructive commands, broad triggers, and opaque installers |
+| 7 | Confirm install | Show candidates and risks, then install only after user approval |
+| 8 | Use immediately | After install, read the new skill and apply it to the task or print explicit invocation |
+
+## 🛠️ Commands
+
+```bash
+# Find skill candidates
+python scripts/find_skills.py "PowerPoint PPTX editable presentation Agent Skill" --top 8
+
+# Search curated indexes first
+python scripts/find_curated_indexes.py "AI presentation Agent Skills" --top 8
+
+# Classify a high-value task
+python scripts/task_skill_radar.py "tailor my CS internship resume to this JD"
+
+# Audit installed skills
+python scripts/audit_skills.py audit --dest "$HOME/.agents/skills"
+
+# Check pinned PPTX core skills
+python scripts/ensure_core_skills.py pptx
+```
+
+## 🛡️ Safety
+
+This project treats skill installation as a small supply-chain decision.
+
+It looks for:
+
+- overbroad descriptions such as "use for all tasks";
+- prompt-injection language;
+- secret, token, `.env`, or SSH key access patterns;
+- destructive shell commands;
+- opaque `curl | sh` installers;
+- stale, duplicate, or overlapping skills.
+
+It cannot prove a third-party skill is safe. It makes pre-install risk visible.
+
+## 📁 Repository Layout
+
+```text
+.
+|-- SKILL.md
+|-- scripts/
+|-- references/
+|-- examples/
+|-- agents/
+|-- README.md
+`-- README_EN.md
+```
+
+## 🔎 Search Keywords
+
+Codex skills, Claude Code skills, Agent Skills, GitHub skill discovery, skill governance, skill installer, prompt safety, AI agents, Codex CLI, developer tools.
+
+## 📄 License
+
+MIT
