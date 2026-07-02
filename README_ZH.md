@@ -130,7 +130,7 @@ python scripts/audit_skills.py audit --dest "$HOME/.agents/skills"
 python scripts/validate_readme_quality.py
 ```
 
-检查会阻止 README 中出现大尺寸 banner、Mermaid 图、残留 hero/workflow SVG 引用，以及缺失安装/安全说明。
+检查会阻止 README 中出现大尺寸 banner、生成式图表、残留 hero/workflow SVG 引用，以及缺失安装/安全说明。
 
 ## 搜索关键词
 
