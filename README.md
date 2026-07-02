@@ -1,5 +1,9 @@
 <div align="center">
 
+<p>
+  <img src="./assets/hero.png" alt="GitHub Skill Curator" width="900">
+</p>
+
 # GitHub Skill Curator
 
 **帮 Codex / Claude Code 找到更好的 Agent Skills，同时避免技能目录被污染。**
