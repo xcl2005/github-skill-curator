@@ -4,6 +4,9 @@ Use these examples to test whether GitHub Skill Curator feels like a real skill 
 
 ## Scenario walkthroughs
 
+- [Output: PPT skill curation report](outputs/ppt-skill-curation-report.md): a filled candidate review table.
+- [Output: unsafe skill audit report](outputs/unsafe-skill-audit-report.md): a filled risk report from the unsafe fixture.
+- [Fixture: unsafe skill](fixtures/unsafe-skill/SKILL.md): a deliberately unsafe local fixture for scanner demos.
 - [Find a PPTX skill demo](find-pptx-skill-demo.md): show the ranked candidate table and install command shape.
 - [Audit local skills demo](audit-local-skills-demo.md): inspect installed skills for noisy, stale, or risky behavior.
 - [Install selected skill demo](install-selected-skill-demo.md): install one reviewed skill folder after approval.

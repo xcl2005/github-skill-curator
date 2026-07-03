@@ -2,6 +2,10 @@
 
 ## 0.1.0 - 2026-07-03
 
+- Added issue and pull request templates for skill recommendations, unsafe skill reports, scanner false positives, and docs improvements.
+- Added filled demo outputs, an unsafe fixture skill, and a risk model with default review actions.
+- Added README `Star this if` / `Not for` blocks to help users self-identify quickly.
+- Added social preview copy guidance for GitHub repository sharing.
 - Sharpened the repository positioning around Agent Skill discovery, ranking, installation, and safety review.
 - Added demo examples for finding PPTX skills, auditing local skills, installing selected skills, and reviewing suspicious skills.
 - Added `skill_manifest.yaml` for Codex / Claude Code audience, canonical paths, core functions, scoring dimensions, and safety scan patterns.

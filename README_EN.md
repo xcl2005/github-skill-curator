@@ -32,6 +32,18 @@ This project does not replace built-in artifact tools. It decides when built-in 
 
 It is not only for Codex users. The shared Agent Skills structure is `skill-name/SKILL.md` plus optional `scripts/`, `references/`, and `assets/`. Codex and Claude Code mainly differ in install paths and direct invocation syntax.
 
+## ⭐ Star this if you...
+
+- often ask Codex / Claude Code to install or compare skills from GitHub;
+- worry that overbroad or unsafe skills will pollute your local agent setup;
+- want a review-first workflow: local check -> GitHub search -> scoring -> safety scan -> install after approval.
+
+## 🚫 Not for
+
+- blindly auto-installing every popular skill;
+- proving third-party skills are safe;
+- replacing built-in tools when the current agent can already solve the task.
+
 ## ✨ Why
 
 Agent Skills are powerful, but a messy skill folder makes agents slower, noisier, and easier to misroute through overbroad `description` fields.
@@ -68,6 +80,11 @@ python scripts/install_skill.py https://github.com/owner/ppt-skill --skill-path 
 ```
 
 If a pinned or curated PPT source is already known, the curator checks that route before broad GitHub search. See [`examples/install-ppt-skill.md`](examples/install-ppt-skill.md).
+
+See filled output samples:
+
+- [`examples/outputs/ppt-skill-curation-report.md`](examples/outputs/ppt-skill-curation-report.md)
+- [`examples/outputs/unsafe-skill-audit-report.md`](examples/outputs/unsafe-skill-audit-report.md)
 
 ## 👨‍💻 Use Cases
 
@@ -115,6 +132,8 @@ The curator flags patterns such as:
 - obfuscated execution: `eval`, `base64 -d`, `Invoke-Expression`.
 
 The scan is heuristic. It makes risk visible before installation; it does not prove that a third-party repository is safe.
+
+For risk levels and default actions, see [`references/risk_model.md`](references/risk_model.md).
 
 ## 📦 Quick Start
 
@@ -259,6 +278,8 @@ It cannot prove a third-party skill is safe. It makes pre-install risk visible.
 .
 |-- SKILL.md
 |-- skill_manifest.yaml
+|-- .github/
+|-- docs/
 |-- scripts/
 |-- references/
 |-- examples/

@@ -1,0 +1,37 @@
+name: Unsafe skill report
+description: Report a risky Agent Skill candidate or installed skill.
+title: "[Unsafe skill] "
+labels: ["safety", "needs-review"]
+body:
+  - type: input
+    id: repository
+    attributes:
+      label: Candidate repository or local skill name
+      placeholder: https://github.com/owner/repo or ~/.agents/skills/example-skill
+    validations:
+      required: true
+  - type: checkboxes
+    id: risk_type
+    attributes:
+      label: What risk did you see?
+      options:
+        - label: Overbroad trigger description
+        - label: Prompt injection language
+        - label: Secret, token, `.env`, SSH key, or browser profile access
+        - label: Destructive command pattern
+        - label: Opaque installer such as `curl | sh`
+        - label: Obfuscated execution such as `eval`, `base64 -d`, or `Invoke-Expression`
+        - label: Whole-repo install when only one skill folder is needed
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Paste the relevant `SKILL.md`, script excerpt, command, or audit output.
+    validations:
+      required: true
+  - type: textarea
+    id: expected_action
+    attributes:
+      label: Expected curator action
+      placeholder: Reject, warn, quarantine, require approval, or improve the scanner.
+

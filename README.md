@@ -33,6 +33,18 @@ Agent Skills 正在变得越来越多、越来越乱。**GitHub Skill Curator** 
 
 它面向的不只是 Codex 用户。Agent Skills 的核心结构是 `skill-name/SKILL.md` 加可选的 `scripts/`、`references/`、`assets/`，Codex 与 Claude Code 的差异主要在安装路径和显式调用方式。
 
+## ⭐ Star this if you...
+
+- often ask Codex / Claude Code to install or compare skills from GitHub;
+- worry that overbroad or unsafe skills will pollute your local agent setup;
+- want a review-first workflow: local check -> GitHub search -> scoring -> safety scan -> install after approval.
+
+## 🚫 Not for
+
+- blindly auto-installing every popular skill;
+- proving third-party skills are safe;
+- replacing built-in tools when the current agent can already solve the task.
+
 ## ✨ 为什么需要
 
 Agent Skill 很有用，但技能目录一旦变乱，agent 会变慢、误触发，甚至被过宽的 `description` 带偏。
@@ -69,6 +81,11 @@ python scripts/install_skill.py https://github.com/owner/ppt-skill --skill-path 
 ```
 
 If a pinned or curated PPT source is already known, the curator checks that route before broad GitHub search. See [`examples/install-ppt-skill.md`](examples/install-ppt-skill.md).
+
+See filled output samples:
+
+- [`examples/outputs/ppt-skill-curation-report.md`](examples/outputs/ppt-skill-curation-report.md)
+- [`examples/outputs/unsafe-skill-audit-report.md`](examples/outputs/unsafe-skill-audit-report.md)
 
 ## 👨‍💻 适用场景
 
@@ -116,6 +133,8 @@ The curator flags patterns such as:
 - obfuscated execution: `eval`, `base64 -d`, `Invoke-Expression`.
 
 The scan is heuristic. It makes risk visible before installation; it does not prove that a third-party repository is safe.
+
+For risk levels and default actions, see [`references/risk_model.md`](references/risk_model.md).
 
 ## 📦 快速开始
 
@@ -260,6 +279,8 @@ python scripts/ensure_core_skills.py pptx
 .
 |-- SKILL.md
 |-- skill_manifest.yaml
+|-- .github/
+|-- docs/
 |-- scripts/
 |-- references/
 |-- examples/

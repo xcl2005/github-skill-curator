@@ -1,0 +1,25 @@
+name: Safety false positive
+description: Report a scanner warning that may be too broad or misleading.
+title: "[False positive] "
+labels: ["safety", "false-positive"]
+body:
+  - type: textarea
+    id: warning
+    attributes:
+      label: Warning shown
+      description: Paste the exact warning or risk pattern.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Why might it be a false positive?
+      description: Explain the legitimate context for the flagged text or command.
+    validations:
+      required: true
+  - type: textarea
+    id: safer_rule
+    attributes:
+      label: Suggested narrower rule
+      description: Optional scanner wording or matching rule.
+

@@ -1,0 +1,30 @@
+name: Docs improvement
+description: Suggest a clearer README, demo, scoring, or install explanation.
+title: "[Docs] "
+labels: ["documentation"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Documentation area
+      options:
+        - README first screen
+        - Demo / examples
+        - Scoring model
+        - Safety scan
+        - Install workflow
+        - Codex / Claude Code paths
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: What was unclear?
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested change
+

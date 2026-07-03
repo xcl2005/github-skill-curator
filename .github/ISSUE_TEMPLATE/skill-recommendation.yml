@@ -1,0 +1,41 @@
+name: Skill recommendation
+description: Suggest an Agent Skill repository for review or inclusion.
+title: "[Skill recommendation] "
+labels: ["skill-recommendation"]
+body:
+  - type: input
+    id: repository
+    attributes:
+      label: Candidate repository
+      description: Link to the GitHub repository or skill folder.
+      placeholder: https://github.com/owner/repo/tree/main/path/to/skill
+    validations:
+      required: true
+  - type: textarea
+    id: task
+    attributes:
+      label: What task does it help with?
+      description: Describe the workflow this skill should improve.
+      placeholder: PPTX generation, DOCX editing, literature review, resume tailoring, etc.
+    validations:
+      required: true
+  - type: dropdown
+    id: install_scope
+    attributes:
+      label: Expected install scope
+      options:
+        - User-wide Codex skill
+        - Project-local Codex skill
+        - Claude Code skill
+        - Review only
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Why is it worth reviewing?
+      description: Mention docs, examples, stars, maintenance, license, or safety signals.
+    validations:
+      required: true
+
