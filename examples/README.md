@@ -4,6 +4,9 @@ Use these examples to test whether GitHub Skill Curator feels like a real skill 
 
 ## Scenario walkthroughs
 
+- [Find a PPTX skill demo](find-pptx-skill-demo.md): show the ranked candidate table and install command shape.
+- [Audit local skills demo](audit-local-skills-demo.md): inspect installed skills for noisy, stale, or risky behavior.
+- [Install selected skill demo](install-selected-skill-demo.md): install one reviewed skill folder after approval.
 - [Install a PPT skill](install-ppt-skill.md): find, score, review, and install a reusable presentation skill only after approval.
 - [Audit an unsafe skill](audit-unsafe-skill.md): inspect a suspicious skill before it can pollute a Codex or Claude Code setup.
 

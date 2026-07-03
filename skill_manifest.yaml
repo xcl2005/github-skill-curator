@@ -1,0 +1,38 @@
+skill_name: github-skill-curator
+version: 0.1.0
+entrypoint: SKILL.md
+audience:
+  - Codex
+  - Claude Code
+canonical_paths:
+  codex_user: ~/.agents/skills
+  codex_project: .agents/skills
+  claude_user: ~/.claude/skills
+  claude_project: .claude/skills
+core_functions:
+  - discover_skills
+  - score_candidates
+  - safety_scan
+  - install_selected_skill
+  - audit_local_skills
+  - disable_or_quarantine_noisy_skills
+default_policy:
+  local_first: true
+  review_before_install: true
+  install_selected_skill_folder_only: true
+  do_not_replace_builtin_tools_by_default: true
+scoring_dimensions:
+  - task_relevance
+  - stars_and_forks
+  - recent_maintenance
+  - license_reuse_clarity
+  - skill_folder_structure
+  - examples_docs_scripts_references_assets
+  - safety_scan_result
+safety_scan_patterns:
+  - prompt_injection
+  - secret_or_token_access
+  - destructive_commands
+  - opaque_remote_installers
+  - obfuscated_execution
+  - overbroad_trigger_descriptions
