@@ -16,6 +16,9 @@ core_functions:
   - install_selected_skill
   - audit_local_skills
   - disable_or_quarantine_noisy_skills
+demo_scripts:
+  - scripts/demo_curate.py
+  - examples/fixtures/sample-skill-index.json
 default_policy:
   local_first: true
   review_before_install: true

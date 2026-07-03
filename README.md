@@ -13,6 +13,7 @@
 <a href="https://github.com/xcl2005/github-skill-curator/network/members"><img src="https://img.shields.io/github/forks/xcl2005/github-skill-curator?style=flat-square" alt="GitHub forks"></a>
 <a href="https://github.com/xcl2005/github-skill-curator/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT license"></a>
 <a href="https://github.com/xcl2005/github-skill-curator/releases"><img src="https://img.shields.io/github/v/release/xcl2005/github-skill-curator?style=flat-square" alt="Latest release"></a>
+<a href="https://github.com/xcl2005/github-skill-curator/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/xcl2005/github-skill-curator/ci.yml?branch=main&style=flat-square" alt="CI status"></a>
 <img src="https://img.shields.io/badge/Agent%20Skills-Codex%20%7C%20Claude-111827?style=flat-square" alt="Agent Skills for Codex and Claude">
 <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square" alt="Python 3.10+">
 <img src="https://img.shields.io/badge/Install-Review%20First-0F766E?style=flat-square" alt="Review before install">
@@ -60,10 +61,18 @@ Agent Skill 很有用，但技能目录一旦变乱，agent 会变慢、误触�
 ## 🎬 Demo: Find and review a PPTX skill
 
 ```bash
+python scripts/demo_curate.py
+```
+
+The offline demo does not call the GitHub API. It writes a deterministic report to [`examples/outputs/demo-curation-report.generated.md`](examples/outputs/demo-curation-report.generated.md), so new users can inspect the review shape before using live search.
+
+For live GitHub search, run:
+
+```bash
 python scripts/find_skills.py "PowerPoint PPTX editable presentation Agent Skill" --top 5 --tier relaxed
 ```
 
-The command prints ranked candidates with the same fields the installer needs for review:
+Both paths use the same review vocabulary:
 
 ```text
 # GitHub skill candidates (relaxed+)
@@ -77,6 +86,7 @@ The command prints ranked candidates with the same fields the installer needs fo
 Then the curator shows install command examples, but installation stays review-first:
 
 ```bash
+python scripts/install_skill.py https://github.com/owner/ppt-skill --skill-path skills/pptx --agent codex --dry-run
 python scripts/install_skill.py https://github.com/owner/ppt-skill --skill-path skills/pptx --agent codex
 ```
 
@@ -86,6 +96,7 @@ See filled output samples:
 
 - [`examples/outputs/ppt-skill-curation-report.md`](examples/outputs/ppt-skill-curation-report.md)
 - [`examples/outputs/unsafe-skill-audit-report.md`](examples/outputs/unsafe-skill-audit-report.md)
+- [`examples/outputs/demo-curation-report.generated.md`](examples/outputs/demo-curation-report.generated.md)
 
 ## 👨‍💻 适用场景
 
@@ -175,6 +186,7 @@ git clone https://github.com/xcl2005/github-skill-curator.git ~/.claude/skills/g
 
 ```bash
 # 安装到 Codex 默认目录
+python scripts/install_skill.py owner/repo --skill-path path/to/skill --agent codex --dry-run
 python scripts/install_skill.py owner/repo --skill-path path/to/skill --agent codex
 
 # 安装到 Claude Code 默认目录
@@ -254,6 +266,9 @@ python scripts/task_skill_radar.py "tailor my CS internship resume to this JD"
 # 审计本地 skill
 python scripts/audit_skills.py audit --dest "$HOME/.agents/skills"
 
+# 离线 demo，不需要 GitHub token
+python scripts/demo_curate.py
+
 # 检查 PPTX pinned core skill
 python scripts/ensure_core_skills.py pptx
 ```
@@ -284,6 +299,7 @@ python scripts/ensure_core_skills.py pptx
 |-- scripts/
 |-- references/
 |-- examples/
+|-- docs/
 |-- agents/
 |-- README.md
 `-- README_EN.md

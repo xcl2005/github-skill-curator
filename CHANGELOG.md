@@ -2,6 +2,11 @@
 
 ## 0.1.0 - 2026-07-03
 
+- Added CI workflow and validation badge.
+- Added `scripts/demo_curate.py` for deterministic offline curation demos without GitHub API access.
+- Added fixed sample skill index fixture and generated demo curation report.
+- Added `--dry-run` to `scripts/install_skill.py` so users can clone, validate, and safety-check a selected skill without copying files.
+- Fixed installer replacement behavior: existing skill folders now require `--force` before backup-and-replace.
 - Added issue and pull request templates for skill recommendations, unsafe skill reports, scanner false positives, and docs improvements.
 - Added filled demo outputs, an unsafe fixture skill, and a risk model with default review actions.
 - Added README `Star this if` / `Not for` blocks to help users self-identify quickly.

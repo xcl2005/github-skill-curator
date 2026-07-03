@@ -1,0 +1,63 @@
+[
+  {
+    "repo": "owner/ppt-skill",
+    "description": "Focused editable PPTX Agent Skill with examples and a narrow trigger.",
+    "stars": 1200,
+    "updated_at": "2026-06-20",
+    "license": "MIT",
+    "skill_paths": ["skills/pptx/SKILL.md"],
+    "risk_flags": [],
+    "score": 82.5,
+    "tier": "strict",
+    "decision": "Recommend after upstream review"
+  },
+  {
+    "repo": "owner/slides-agent",
+    "description": "General slide generation skill with usable docs but one medium warning.",
+    "stars": 340,
+    "updated_at": "2026-05-11",
+    "license": "Apache-2.0",
+    "skill_paths": ["SKILL.md"],
+    "risk_flags": ["medium: broad install instructions"],
+    "score": 68.0,
+    "tier": "relaxed",
+    "decision": "Review manually"
+  },
+  {
+    "repo": "owner/random-agent-tools",
+    "description": "Broad agent tools repository with no selected skill folder boundary.",
+    "stars": 900,
+    "updated_at": "2025-11-03",
+    "license": "NOASSERTION",
+    "skill_paths": ["SKILL.md"],
+    "risk_flags": ["medium: whole-repo install shape"],
+    "score": 55.0,
+    "tier": "exploratory",
+    "decision": "Skip"
+  },
+  {
+    "repo": "owner/always-run-skill",
+    "description": "Skill with an overbroad trigger description.",
+    "stars": 88,
+    "updated_at": "2026-03-08",
+    "license": "MIT",
+    "skill_paths": ["SKILL.md"],
+    "risk_flags": ["high: overbroad trigger"],
+    "score": 70.0,
+    "tier": "reject",
+    "decision": "Reject"
+  },
+  {
+    "repo": "owner/unsafe-installer-skill",
+    "description": "Skill with an opaque remote installer and secret-access patterns.",
+    "stars": 42,
+    "updated_at": "2026-01-19",
+    "license": "MIT",
+    "skill_paths": ["skills/unsafe/SKILL.md"],
+    "risk_flags": ["high: secret access", "medium: curl pipe shell"],
+    "score": 61.0,
+    "tier": "reject",
+    "decision": "Reject"
+  }
+]
+

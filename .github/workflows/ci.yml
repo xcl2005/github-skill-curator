@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Validate README quality
+        run: python scripts/validate_readme_quality.py
+      - name: Run offline curator demo
+        run: python scripts/demo_curate.py --fixture examples/fixtures/sample-skill-index.json --out /tmp/demo-curation-report.md
+      - name: Run unsafe fixture audit
+        run: python scripts/audit_skills.py audit --dest examples/fixtures
+

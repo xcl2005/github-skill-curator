@@ -6,7 +6,9 @@ Use these examples to test whether GitHub Skill Curator feels like a real skill 
 
 - [Output: PPT skill curation report](outputs/ppt-skill-curation-report.md): a filled candidate review table.
 - [Output: unsafe skill audit report](outputs/unsafe-skill-audit-report.md): a filled risk report from the unsafe fixture.
+- [Output: offline generated curation report](outputs/demo-curation-report.generated.md): deterministic demo output from `scripts/demo_curate.py`.
 - [Fixture: unsafe skill](fixtures/unsafe-skill/SKILL.md): a deliberately unsafe local fixture for scanner demos.
+- [Fixture: sample skill index](fixtures/sample-skill-index.json): fixed offline candidates for the demo script.
 - [Find a PPTX skill demo](find-pptx-skill-demo.md): show the ranked candidate table and install command shape.
 - [Audit local skills demo](audit-local-skills-demo.md): inspect installed skills for noisy, stale, or risky behavior.
 - [Install selected skill demo](install-selected-skill-demo.md): install one reviewed skill folder after approval.
@@ -14,6 +16,12 @@ Use these examples to test whether GitHub Skill Curator feels like a real skill 
 - [Audit an unsafe skill](audit-unsafe-skill.md): inspect a suspicious skill before it can pollute a Codex or Claude Code setup.
 
 ## Find a specialist skill
+
+Offline demo:
+
+```bash
+python scripts/demo_curate.py
+```
 
 ```bash
 python scripts/find_skills.py "markdown README documentation generator Codex skill" --top 8

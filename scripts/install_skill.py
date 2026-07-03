@@ -144,7 +144,8 @@ def copy_skill(src: Path, dest_root: Path, name_override: str | None, force: boo
     if dest.exists():
         backup = dest.with_name(dest.name + f".backup-{time.strftime('%Y%m%d-%H%M%S')}")
         if not force:
-            print(f"Destination exists. Moving old copy to {backup}")
+            raise FileExistsError(f"Destination already exists: {dest}. Re-run with --force to replace it after backup.")
+        print(f"Destination exists. Moving old copy to {backup}")
         shutil.move(str(dest), str(backup))
     shutil.copytree(src, dest, ignore=shutil.ignore_patterns(".git", "node_modules", ".venv", "__pycache__"))
     return dest
@@ -228,6 +229,7 @@ def main() -> int:
     ap.add_argument("--name", help="Override installed folder name")
     ap.add_argument("--yes", action="store_true", help="Proceed without interactive confirmation")
     ap.add_argument("--force", action="store_true", help="Replace existing destination after backup")
+    ap.add_argument("--dry-run", action="store_true", help="Clone, validate, and scan the selected skill without copying files")
     ap.add_argument("--skip-safety-scan", action="store_true", help="Skip heuristic local safety scan")
     args = ap.parse_args()
 
@@ -258,11 +260,30 @@ def main() -> int:
             print("Safety scan warnings:")
             for f in findings[:20]:
                 print(" -", f)
-            if not args.yes:
+            if not args.dry_run and not args.yes:
                 ans = input("Continue installation anyway? Type 'yes' to continue: ").strip().lower()
                 if ans != "yes":
                     print("Installation cancelled.")
                     return 1
+
+        if args.dry_run:
+            print()
+            print("Dry-run install plan")
+            print(f"  Repository: {repo_url}")
+            print(f"  Commit: {commit or 'unknown'}")
+            print(f"  Skill path: {src.relative_to(work)}")
+            print(f"  Skill name: {skill_name}")
+            print("  Destination targets:")
+            for agent, dest_root in dest_targets:
+                print(f"   - {agent}: {dest_root / skill_name}")
+            if args.skip_safety_scan:
+                print("  Safety scan: skipped")
+            elif findings:
+                print(f"  Safety scan: {len(findings)} warning(s)")
+            else:
+                print("  Safety scan: no warnings")
+            print("Dry run only. No files were copied and no registry was updated.")
+            return 0
 
         if not args.yes:
             print(f"About to install {src.relative_to(work)} as {skill_name!r} into:")
