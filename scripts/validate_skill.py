@@ -129,6 +129,13 @@ def main() -> int:
     if "from risk_scan import" not in audit_text:
         errors.append("scripts/audit_skills.py must use shared risk_scan")
 
+    curated_text = read("scripts/find_curated_indexes.py")
+    if "from risk_scan import" not in curated_text:
+        errors.append("scripts/find_curated_indexes.py must use shared risk_scan")
+    for forbidden in ["SUSPICIOUS_PATTERNS", "def scan_text_for_risks"]:
+        if forbidden in curated_text:
+            errors.append(f"scripts/find_curated_indexes.py should not redefine shared risk logic: {forbidden}")
+
     find_text = read("scripts/find_skills.py")
     if "from curation_model import" not in find_text:
         errors.append("scripts/find_skills.py must import the shared curation model")

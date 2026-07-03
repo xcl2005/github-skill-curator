@@ -23,6 +23,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
+from risk_scan import scan_text_for_risks
+
 API = "https://api.github.com"
 USER_AGENT = "github-skill-curator/1.2"
 ROOT = Path(__file__).resolve().parents[1]
@@ -40,16 +42,6 @@ DOMAIN_TERMS = {
     "academic": ["paper", "academic", "literature", "citation", "latex", "论文", "科研", "文献"],
     "resume": ["resume", "cv", "ats", "job", "cover letter", "简历", "求职"],
 }
-SUSPICIOUS_PATTERNS = [
-    ("high", r"ignore (all )?(previous|system|developer|user) instructions"),
-    ("high", r"exfiltrat(e|ion)|steal\s+(secret|token|key|credential)|credential\s+harvest|private key|ssh key|browser profile"),
-    ("high", r"rm\s+-rf\s+(/|~|\$HOME|\*)"),
-    ("medium", r"curl\s+[^\n|;]+\|\s*(sh|bash)"),
-    ("medium", r"wget\s+[^\n|;]+\|\s*(sh|bash)"),
-    ("medium", r"base64\s+-d|eval\s+\$|Invoke-Expression|iex\b"),
-]
-
-
 @dataclass
 class IndexCandidate:
     repo: str
@@ -141,15 +133,6 @@ def days_since(iso: str) -> int:
         return max(0, (dt.datetime.now(dt.timezone.utc) - d).days)
     except Exception:
         return 9999
-
-
-def scan_text_for_risks(text: str) -> list[str]:
-    findings = []
-    lower = text.lower()
-    for sev, pat in SUSPICIOUS_PATTERNS:
-        if re.search(pat, lower, flags=re.IGNORECASE):
-            findings.append(f"{sev}: pattern `{pat}`")
-    return list(dict.fromkeys(findings))
 
 
 def score_index(repo: dict[str, Any], tree: list[dict[str, Any]], readme: str, skill_texts: list[str], seed: bool) -> tuple[float, str, list[str], list[str]]:
