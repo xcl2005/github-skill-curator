@@ -16,14 +16,17 @@ REQUIRED_FILES = [
     "scripts/risk_scan.py",
     "scripts/curation_model.py",
     "scripts/demo_curate.py",
+    "scripts/demo_audit_local.py",
     "scripts/find_skills.py",
     "scripts/install_skill.py",
     "scripts/audit_skills.py",
     "tests/test_curation_model.py",
     "tests/test_risk_scan.py",
+    "references/decision_policy.md",
     "references/risk_model.md",
     "examples/fixtures/sample-skill-index.json",
     "examples/outputs/demo-curation-report.generated.md",
+    "examples/outputs/local-skill-audit.generated.md",
     "examples/outputs/install-dry-run-unsafe.sample.json",
 ]
 
@@ -34,6 +37,7 @@ PROTECTED_SKILL_PHRASES = [
     "Before recommend / install / use",
     "scripts/risk_scan.py",
     "Do not recommend high-risk candidates",
+    "references/decision_policy.md",
 ]
 
 REQUIRED_RISK_MODEL_PHRASES = [

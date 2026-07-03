@@ -4,6 +4,7 @@
 
 - Added CI workflow and validation badge.
 - Added `scripts/demo_curate.py` for deterministic offline curation demos without GitHub API access.
+- Added deterministic local audit demo output and a decision policy reference for tier actions.
 - Added fixed sample skill index fixture and generated demo curation report.
 - Added `--dry-run` to `scripts/install_skill.py` so users can clone, validate, and safety-check a selected skill without copying files.
 - Added `--dry-run --json` install plans for agent and CI consumers.

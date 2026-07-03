@@ -7,6 +7,7 @@ Use these examples to test whether GitHub Skill Curator feels like a real skill 
 - [Output: PPT skill curation report](outputs/ppt-skill-curation-report.md): a filled candidate review table.
 - [Output: unsafe skill audit report](outputs/unsafe-skill-audit-report.md): a filled risk report from the unsafe fixture.
 - [Output: offline generated curation report](outputs/demo-curation-report.generated.md): deterministic demo output from `scripts/demo_curate.py`.
+- [Output: local skill audit generated report](outputs/local-skill-audit.generated.md): deterministic local audit output from `scripts/demo_audit_local.py`.
 - [Output: install dry-run JSON](outputs/install-dry-run-report.sample.json): machine-readable install plan shape for agent or CI use.
 - [Output: unsafe install dry-run JSON](outputs/install-dry-run-unsafe.sample.json): high/medium risk findings from the unsafe fixture.
 - [Fixture: unsafe skill](fixtures/unsafe-skill/SKILL.md): a deliberately unsafe local fixture for scanner demos.
@@ -45,6 +46,7 @@ python scripts/task_skill_radar.py "write a literature review for a machine lear
 
 ```bash
 python scripts/audit_skills.py audit --dest "$HOME/.agents/skills"
+python scripts/demo_audit_local.py --out examples/outputs/local-skill-audit.generated.md
 ```
 
 ## Disable a noisy skill

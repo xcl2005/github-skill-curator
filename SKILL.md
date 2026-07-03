@@ -148,6 +148,8 @@ The point of installation is not collecting skills. It is improving the current 
 
 Before recommending, installing, or using a skill, run or emulate the same governance checks:
 
+Use `references/decision_policy.md` for tier meanings and default actions.
+
 1. Confirm the task is worth skill discovery instead of using built-in or already-installed capability.
 2. Score candidates through `scripts/curation_model.py` or `scripts/find_skills.py`; do not invent scores by inspection.
 3. Run or emulate `scripts/risk_scan.py` against the selected `SKILL.md` and bundled scripts.

@@ -20,9 +20,12 @@ demo_scripts:
   - scripts/risk_scan.py
   - scripts/curation_model.py
   - scripts/demo_curate.py
+  - scripts/demo_audit_local.py
   - tests/test_curation_model.py
+  - references/decision_policy.md
   - examples/fixtures/sample-skill-index.json
   - examples/outputs/demo-curation-report.generated.md
+  - examples/outputs/local-skill-audit.generated.md
   - examples/outputs/install-dry-run-report.sample.json
   - examples/outputs/install-dry-run-unsafe.sample.json
 default_policy:

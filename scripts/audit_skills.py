@@ -12,6 +12,7 @@ Examples:
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 import os
 import re
@@ -118,9 +119,19 @@ def iter_skill_dirs(dest: Path, include_disabled: bool = False) -> Iterable[tupl
                         yield child, status
 
 
-def audit(dest: Path, include_disabled: bool = False) -> list[SkillAudit]:
+def parse_as_of(value: str | None) -> float | None:
+    if not value:
+        return None
+    try:
+        parsed = dt.datetime.strptime(value, "%Y-%m-%d").replace(tzinfo=dt.timezone.utc)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("--as-of must use YYYY-MM-DD") from exc
+    return parsed.timestamp()
+
+
+def audit(dest: Path, include_disabled: bool = False, as_of: float | None = None) -> list[SkillAudit]:
     rows: list[SkillAudit] = []
-    now = time.time()
+    now = as_of if as_of is not None else time.time()
     for folder, status in iter_skill_dirs(dest, include_disabled=include_disabled) or []:
         skill_md = folder / "SKILL.md"
         name, desc = parse_frontmatter(skill_md)
@@ -144,15 +155,21 @@ def audit(dest: Path, include_disabled: bool = False) -> list[SkillAudit]:
     return rows
 
 
-def print_markdown(rows: list[SkillAudit]) -> None:
+def render_markdown(rows: list[SkillAudit]) -> str:
     if not rows:
-        print("No skills found.")
-        return
-    print("| Skill | Status | Modified | Age | Risks | Notes |")
-    print("|---|---|---|---:|---:|---|")
+        return "No skills found.\n"
+    lines = [
+        "| Skill | Status | Modified | Age | Risks | Notes |",
+        "|---|---|---|---:|---:|---|",
+    ]
     for r in rows:
         notes = "; ".join(r.notes) if r.notes else "OK"
-        print(f"| {r.name} | {r.status} | {r.modified} | {r.age_days}d | {r.risk_count} | {notes} |")
+        lines.append(f"| {r.name} | {r.status} | {r.modified} | {r.age_days}d | {r.risk_count} | {notes} |")
+    return "\n".join(lines) + "\n"
+
+
+def print_markdown(rows: list[SkillAudit]) -> None:
+    print(render_markdown(rows), end="")
 
 
 def move_skill(dest: Path, name: str, target_status: str) -> Path:
@@ -191,8 +208,8 @@ def save_registry(dest: Path, registry: dict) -> None:
     (dest / REGISTRY).write_text(json.dumps(registry, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def prune(dest: Path, older_than_days: int, dry_run: bool) -> None:
-    rows = [r for r in audit(dest) if r.age_days >= older_than_days or r.high_risk or r.broad_description]
+def prune(dest: Path, older_than_days: int, dry_run: bool, as_of: float | None = None) -> None:
+    rows = [r for r in audit(dest, as_of=as_of) if r.age_days >= older_than_days or r.high_risk or r.broad_description]
     if not rows:
         print("No prune candidates.")
         return
@@ -216,6 +233,7 @@ def main() -> int:
     add_dest(p_audit)
     p_audit.add_argument("--include-disabled", action="store_true")
     p_audit.add_argument("--json", action="store_true")
+    p_audit.add_argument("--as-of", help="Evaluate age as of YYYY-MM-DD for reproducible reports")
 
     for command in ["disable", "quarantine", "restore"]:
         p = sub.add_parser(command, help=f"{command} a skill")
@@ -226,6 +244,7 @@ def main() -> int:
     add_dest(p_prune)
     p_prune.add_argument("--older-than-days", type=int, default=180)
     p_prune.add_argument("--dry-run", action="store_true")
+    p_prune.add_argument("--as-of", help="Evaluate age as of YYYY-MM-DD for reproducible reports")
 
     p_reg = sub.add_parser("registry", help="Print local curator registry")
     add_dest(p_reg)
@@ -234,7 +253,7 @@ def main() -> int:
     dest = Path(args.dest).expanduser()
 
     if args.cmd == "audit":
-        rows = audit(dest, include_disabled=args.include_disabled)
+        rows = audit(dest, include_disabled=args.include_disabled, as_of=parse_as_of(args.as_of))
         if args.json:
             print(json.dumps([asdict(r) for r in rows], ensure_ascii=False, indent=2))
         else:
@@ -250,7 +269,7 @@ def main() -> int:
         print(move_skill(dest, args.name, "active"))
         return 0
     if args.cmd == "prune":
-        prune(dest, args.older_than_days, args.dry_run)
+        prune(dest, args.older_than_days, args.dry_run, as_of=parse_as_of(args.as_of))
         return 0
     if args.cmd == "registry":
         print(json.dumps(load_registry(dest), ensure_ascii=False, indent=2))

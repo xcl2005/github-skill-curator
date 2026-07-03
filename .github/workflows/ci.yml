@@ -24,5 +24,7 @@ jobs:
         run: git diff --exit-code examples/outputs/demo-curation-report.generated.md
       - name: Run local installer dry-run fixture
         run: python scripts/install_skill.py --local-repo examples/fixtures/unsafe-skill --skill-path . --dry-run --json | python -c "import json,sys; d=json.load(sys.stdin); assert d['safety']['level']=='high'; assert d['safety']['findings']"
-      - name: Run unsafe fixture audit
-        run: python scripts/audit_skills.py audit --dest examples/fixtures
+      - name: Regenerate local audit demo
+        run: python scripts/demo_audit_local.py --out examples/outputs/local-skill-audit.generated.md
+      - name: Ensure local audit demo is committed
+        run: git diff --exit-code examples/outputs/local-skill-audit.generated.md
