@@ -1,6 +1,11 @@
 # Examples
 
-Use these examples to test whether GitHub Skill Curator is routing tasks clearly.
+Use these examples to test whether GitHub Skill Curator feels like a real skill governance workflow instead of a command list.
+
+## Scenario walkthroughs
+
+- [Install a PPT skill](install-ppt-skill.md): find, score, review, and install a reusable presentation skill only after approval.
+- [Audit an unsafe skill](audit-unsafe-skill.md): inspect a suspicious skill before it can pollute a Codex or Claude Code setup.
 
 ## Find a specialist skill
 

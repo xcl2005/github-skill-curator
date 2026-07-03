@@ -6,7 +6,7 @@
 
 # GitHub Skill Curator
 
-**帮 Codex / Claude Code 找到更好的 Agent Skills，同时避免技能目录被污染。**
+**从 GitHub 发现、排序、安装并安全审计 Codex / Claude Agent Skills，避免 agent 随机装错 skill。**
 
 <a href="https://github.com/xcl2005/github-skill-curator/stargazers"><img src="https://img.shields.io/github/stars/xcl2005/github-skill-curator?style=flat-square" alt="GitHub stars"></a>
 <a href="https://github.com/xcl2005/github-skill-curator/network/members"><img src="https://img.shields.io/github/forks/xcl2005/github-skill-curator?style=flat-square" alt="GitHub forks"></a>
@@ -23,7 +23,9 @@
 
 ## 🔥 最新定位
 
-这个仓库是一个 skill 采购、路由和治理层。它先检查本地 skill，再判断是否值得搜索 GitHub；搜索后会评分、做风险扫描、展示候选，并且默认只在用户批准后安装选中的 skill 文件夹。
+Agent Skills 正在变得越来越多、越来越乱。**GitHub Skill Curator** 的定位是 Agent Skills 的包管理器 + 安全审计器：它先检查本地 skill，再判断是否值得搜索 GitHub；搜索后会评分、做风险扫描、展示候选，并且默认只在用户批准后安装选中的 skill 文件夹。
+
+它解决的问题不是“再装一个 skill”，而是让 Codex / Claude Code 在需要专业能力时用对 skill，避免漏装、错装、误触发或把低质量仓库塞进技能目录。
 
 它面向的不只是 Codex 用户。Agent Skills 的核心结构是 `skill-name/SKILL.md` 加可选的 `scripts/`、`references/`、`assets/`，Codex 与 Claude Code 的差异主要在安装路径和显式调用方式。
 

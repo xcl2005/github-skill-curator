@@ -1,8 +1,12 @@
 <div align="center">
 
+<p>
+  <img src="./assets/hero.png" alt="GitHub Skill Curator" width="900">
+</p>
+
 # GitHub Skill Curator
 
-**Find better Agent Skills for Codex / Claude Code without polluting your skill folder.**
+**Find, rank, install, and safety-check Codex / Claude Agent Skills from GitHub, so your agent uses the right skill instead of a random repo.**
 
 <a href="https://github.com/xcl2005/github-skill-curator/stargazers"><img src="https://img.shields.io/github/stars/xcl2005/github-skill-curator?style=flat-square" alt="GitHub stars"></a>
 <a href="https://github.com/xcl2005/github-skill-curator/network/members"><img src="https://img.shields.io/github/forks/xcl2005/github-skill-curator?style=flat-square" alt="GitHub forks"></a>
@@ -19,7 +23,9 @@
 
 ## 🔥 Positioning
 
-This repository is a skill procurement, routing, and governance layer. It checks local skills first, decides whether GitHub search is worth it, scores candidates, scans risk, shows reviewable options, and installs only the selected skill folder after approval.
+Agent Skills are getting useful, but they are also getting messy. **GitHub Skill Curator** is a package manager + safety reviewer for Agent Skills: it checks local skills first, decides whether GitHub search is worth it, scores candidates, scans risk, shows reviewable options, and installs only the selected skill folder after approval.
+
+The point is not to install more skills. The point is to help Codex / Claude Code choose the right skill for a task without missing better options, installing low-quality repos, or misrouting through unsafe trigger descriptions.
 
 It is not only for Codex users. The shared Agent Skills structure is `skill-name/SKILL.md` plus optional `scripts/`, `references/`, and `assets/`. Codex and Claude Code mainly differ in install paths and direct invocation syntax.
 
