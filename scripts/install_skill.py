@@ -230,8 +230,11 @@ def main() -> int:
     ap.add_argument("--yes", action="store_true", help="Proceed without interactive confirmation")
     ap.add_argument("--force", action="store_true", help="Replace existing destination after backup")
     ap.add_argument("--dry-run", action="store_true", help="Clone, validate, and scan the selected skill without copying files")
+    ap.add_argument("--json", action="store_true", help="With --dry-run, print a machine-readable install plan")
     ap.add_argument("--skip-safety-scan", action="store_true", help="Skip heuristic local safety scan")
     args = ap.parse_args()
+    if args.json and not args.dry_run:
+        ap.error("--json is currently supported only with --dry-run")
 
     repo_url = parse_repo_url(args.repo)
     dest_targets = resolve_dest_targets(args.agent, args.dest)
@@ -267,6 +270,30 @@ def main() -> int:
                     return 1
 
         if args.dry_run:
+            destinations = [
+                {"agent": agent, "path": str(dest_root / skill_name), "exists": (dest_root / skill_name).exists()}
+                for agent, dest_root in dest_targets
+            ]
+            safety = {
+                "level": "warning" if findings else "ok",
+                "findings": findings[:20],
+                "scan_skipped": bool(args.skip_safety_scan),
+            }
+            plan = {
+                "action": "dry_run_install",
+                "repo_url": repo_url,
+                "commit": commit,
+                "skill_path": args.skill_path,
+                "skill_name": skill_name,
+                "destinations": destinations,
+                "frontmatter_valid": True,
+                "safety": safety,
+                "would_copy_files": True,
+                "would_update_registry": False,
+            }
+            if args.json:
+                print(json.dumps(plan, ensure_ascii=False, indent=2))
+                return 0
             print()
             print("Dry-run install plan")
             print(f"  Repository: {repo_url}")
@@ -274,8 +301,9 @@ def main() -> int:
             print(f"  Skill path: {src.relative_to(work)}")
             print(f"  Skill name: {skill_name}")
             print("  Destination targets:")
-            for agent, dest_root in dest_targets:
-                print(f"   - {agent}: {dest_root / skill_name}")
+            for destination in destinations:
+                exists = "exists" if destination["exists"] else "new"
+                print(f"   - {destination['agent']}: {destination['path']} ({exists})")
             if args.skip_safety_scan:
                 print("  Safety scan: skipped")
             elif findings:
@@ -311,3 +339,9 @@ if __name__ == "__main__":
     except subprocess.CalledProcessError as e:
         print(f"Command failed: {e}", file=sys.stderr)
         raise SystemExit(e.returncode)
+    except FileExistsError as e:
+        print(str(e), file=sys.stderr)
+        raise SystemExit(5)
+    except ValueError as e:
+        print(str(e), file=sys.stderr)
+        raise SystemExit(3)

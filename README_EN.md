@@ -86,6 +86,7 @@ Then the curator shows install command examples, but installation stays review-f
 
 ```bash
 python scripts/install_skill.py https://github.com/owner/ppt-skill --skill-path skills/pptx --agent codex --dry-run
+python scripts/install_skill.py https://github.com/owner/ppt-skill --skill-path skills/pptx --agent codex --dry-run --json
 python scripts/install_skill.py https://github.com/owner/ppt-skill --skill-path skills/pptx --agent codex
 ```
 
@@ -96,6 +97,7 @@ See filled output samples:
 - [`examples/outputs/ppt-skill-curation-report.md`](examples/outputs/ppt-skill-curation-report.md)
 - [`examples/outputs/unsafe-skill-audit-report.md`](examples/outputs/unsafe-skill-audit-report.md)
 - [`examples/outputs/demo-curation-report.generated.md`](examples/outputs/demo-curation-report.generated.md)
+- [`examples/outputs/install-dry-run-report.sample.json`](examples/outputs/install-dry-run-report.sample.json)
 
 ## 👨‍💻 Use Cases
 
@@ -298,7 +300,6 @@ It cannot prove a third-party skill is safe. It makes pre-install risk visible.
 |-- scripts/
 |-- references/
 |-- examples/
-|-- docs/
 |-- agents/
 |-- README.md
 `-- README_EN.md

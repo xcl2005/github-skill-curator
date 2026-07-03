@@ -1,0 +1,22 @@
+{
+  "action": "dry_run_install",
+  "repo_url": "https://github.com/owner/ppt-skill",
+  "commit": "0123456789abcdef0123456789abcdef01234567",
+  "skill_path": "skills/pptx",
+  "skill_name": "pptx-skill",
+  "destinations": [
+    {
+      "agent": "codex",
+      "path": "~/.agents/skills/pptx-skill",
+      "exists": false
+    }
+  ],
+  "frontmatter_valid": true,
+  "safety": {
+    "level": "ok",
+    "findings": [],
+    "scan_skipped": false
+  },
+  "would_copy_files": true,
+  "would_update_registry": false
+}

@@ -7,6 +7,7 @@ Use these examples to test whether GitHub Skill Curator feels like a real skill 
 - [Output: PPT skill curation report](outputs/ppt-skill-curation-report.md): a filled candidate review table.
 - [Output: unsafe skill audit report](outputs/unsafe-skill-audit-report.md): a filled risk report from the unsafe fixture.
 - [Output: offline generated curation report](outputs/demo-curation-report.generated.md): deterministic demo output from `scripts/demo_curate.py`.
+- [Output: install dry-run JSON](outputs/install-dry-run-report.sample.json): machine-readable install plan shape for agent or CI use.
 - [Fixture: unsafe skill](fixtures/unsafe-skill/SKILL.md): a deliberately unsafe local fixture for scanner demos.
 - [Fixture: sample skill index](fixtures/sample-skill-index.json): fixed offline candidates for the demo script.
 - [Find a PPTX skill demo](find-pptx-skill-demo.md): show the ranked candidate table and install command shape.

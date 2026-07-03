@@ -7,10 +7,13 @@ import json
 from pathlib import Path
 from typing import Any
 
+from curation_model import candidate_from_fixture, decision_for_candidate, safety_label, sort_candidates, terms_from_task
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_FIXTURE = ROOT / "examples" / "fixtures" / "sample-skill-index.json"
 DEFAULT_OUT = ROOT / "examples" / "outputs" / "demo-curation-report.generated.md"
+DEFAULT_TASK = "PowerPoint PPTX editable presentation Agent Skill"
 
 
 def load_candidates(path: Path) -> list[dict[str, Any]]:
@@ -20,38 +23,34 @@ def load_candidates(path: Path) -> list[dict[str, Any]]:
     return data
 
 
-def safety_label(flags: list[str]) -> str:
-    if not flags:
-        return "OK"
-    if any(flag.startswith("high:") for flag in flags):
-        return "High risk"
-    return "Warning"
-
-
 def render_report(candidates: list[dict[str, Any]], fixture: Path) -> str:
-    sorted_candidates = sorted(candidates, key=lambda item: float(item.get("score", 0)), reverse=True)
+    terms = terms_from_task(DEFAULT_TASK)
+    scored = sort_candidates([candidate_from_fixture(item, terms) for item in candidates])
+    try:
+        fixture_display = fixture.relative_to(ROOT).as_posix()
+    except ValueError:
+        fixture_display = fixture.as_posix()
     lines = [
         "# Offline Skill Curation Demo",
         "",
-        f"Fixture: `{fixture.as_posix()}`",
+        f"Fixture: `{fixture_display}`",
         "",
-        "This deterministic demo mirrors the review shape of `find_skills.py` without calling the GitHub API.",
+        "This deterministic demo uses the same curation model as `find_skills.py` without calling the GitHub API.",
         "",
         "| Rank | Candidate | Tier | Score | Stars | License | Safety | Decision |",
         "|---:|---|---|---:|---:|---|---|---|",
     ]
-    for idx, item in enumerate(sorted_candidates, 1):
-        flags = list(item.get("risk_flags") or [])
+    for idx, item in enumerate(scored, 1):
         lines.append(
             "| {rank} | `{repo}` | {tier} | {score:.1f} | {stars} | {license} | {safety} | {decision} |".format(
                 rank=idx,
-                repo=item.get("repo", ""),
-                tier=item.get("tier", ""),
-                score=float(item.get("score", 0)),
-                stars=int(item.get("stars", 0)),
-                license=item.get("license", "NOASSERTION"),
-                safety=safety_label(flags),
-                decision=item.get("decision", ""),
+                repo=item.repo,
+                tier=item.tier,
+                score=item.score,
+                stars=item.stars,
+                license=item.license,
+                safety=safety_label(item.safety),
+                decision=decision_for_candidate(item),
             )
         )
     lines.extend(
@@ -65,10 +64,10 @@ def render_report(candidates: list[dict[str, Any]], fixture: Path) -> str:
             "",
         ]
     )
-    rejected = [item for item in sorted_candidates if item.get("tier") == "reject"]
+    rejected = [item for item in scored if item.tier == "reject"]
     for item in rejected:
-        flags = "; ".join(item.get("risk_flags") or ["unspecified risk"])
-        lines.append(f"- `{item.get('repo')}`: {flags}")
+        flags = "; ".join(item.safety or ["tier rejected by score or metadata"])
+        lines.append(f"- `{item.repo}`: {flags}")
     lines.append("")
     return "\n".join(lines)
 
@@ -91,4 +90,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

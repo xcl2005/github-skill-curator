@@ -305,6 +305,16 @@ def score_repo(repo: Dict[str, Any], skill_paths: List[str], skill_texts: List[s
     return round(score, 1), tier, matched, risk_findings, reasons
 
 
+# Use the shared model below so live search and the offline demo cannot drift.
+from curation_model import Candidate as SharedCandidate
+from curation_model import score_repo as shared_score_repo
+from curation_model import sort_candidates
+from curation_model import terms_from_task as shared_terms_from_task
+
+Candidate = SharedCandidate
+score_repo = shared_score_repo
+terms_from_task = shared_terms_from_task
+
 
 def cache_root() -> str:
     root = os.environ.get("XDG_CACHE_HOME") or os.path.join(os.path.expanduser("~"), ".cache")
@@ -393,8 +403,7 @@ def collect_candidates(task: str, top: int, min_repos: int) -> List[Candidate]:
             reasons=reasons,
             install_commands=commands,
         ))
-    candidates.sort(key=lambda c: (c.tier == "strict", c.score, c.stars), reverse=True)
-    return candidates
+    return sort_candidates(candidates)
 
 
 def print_markdown(cands: List[Candidate], requested_tier: str, top: int) -> None:
