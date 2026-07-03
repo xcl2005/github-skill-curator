@@ -10,6 +10,7 @@
 - Added shared `scripts/curation_model.py` so offline demos and live search share scoring, tiering, risk labels, and safety-first sorting.
 - Added shared `scripts/risk_scan.py` and wired curation, install, and audit paths toward one risk vocabulary.
 - Simplified `scripts/find_skills.py` so it no longer carries a second scoring model.
+- Added risk scanner unit tests and CI assertions for unsafe installer dry-run JSON.
 - Added `scripts/validate_skill.py` to validate SKILL frontmatter, manifest paths, README demo links, dry-run support, and risk-model coverage.
 - Changed CI to regenerate the committed curation demo and fail when the generated output drifts.
 - Added local fixture dry-run support and curation model unit tests.

@@ -23,6 +23,6 @@ jobs:
       - name: Ensure curator demo output is committed
         run: git diff --exit-code examples/outputs/demo-curation-report.generated.md
       - name: Run local installer dry-run fixture
-        run: python scripts/install_skill.py --local-repo examples/fixtures/unsafe-skill --skill-path . --dry-run --json
+        run: python scripts/install_skill.py --local-repo examples/fixtures/unsafe-skill --skill-path . --dry-run --json | python -c "import json,sys; d=json.load(sys.stdin); assert d['safety']['level']=='high'; assert d['safety']['findings']"
       - name: Run unsafe fixture audit
         run: python scripts/audit_skills.py audit --dest examples/fixtures

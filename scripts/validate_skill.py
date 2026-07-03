@@ -20,6 +20,7 @@ REQUIRED_FILES = [
     "scripts/install_skill.py",
     "scripts/audit_skills.py",
     "tests/test_curation_model.py",
+    "tests/test_risk_scan.py",
     "references/risk_model.md",
     "examples/fixtures/sample-skill-index.json",
     "examples/outputs/demo-curation-report.generated.md",
