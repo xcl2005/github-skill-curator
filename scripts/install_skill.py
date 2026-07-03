@@ -19,21 +19,9 @@ import time
 from pathlib import Path
 from urllib.parse import urlparse
 
-REGISTRY = ".skill-curator-registry.json"
+from risk_scan import finding_strings, risk_level, scan_folder as scan_risk_folder
 
-SUSPICIOUS_PATTERNS = [
-    r"ignore (all )?(previous|system|developer|user) instructions",
-    r"exfiltrat(e|ion)|steal\s+(secret|token|key|credential)|credential\s+harvest|private key|ssh key|browser profile",
-    r"\.env|id_rsa|GITHUB_TOKEN|OPENAI_API_KEY|api[_-]?key",
-    r"rm\s+-rf\s+(/|~|\$HOME|\*)",
-    r"curl\s+[^\n|;]+\|\s*(sh|bash)",
-    r"wget\s+[^\n|;]+\|\s*(sh|bash)",
-    r"chmod\s+777|sudo\s+",
-    r"base64\s+-d|eval\s+\$|Invoke-Expression|iex\b",
-]
-SKIP_SCAN_NAMES = {".gitignore", ".difyignore"}
-SKIP_SCAN_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico", ".pdf", ".pptx", ".docx", ".xlsx", ".pyc"}
-SKIP_SCAN_PARTS = {".git", "__pycache__", "node_modules", ".venv"}
+REGISTRY = ".skill-curator-registry.json"
 
 
 def parse_repo_url(url: str) -> str:
@@ -79,28 +67,6 @@ def read_text(path: Path, limit: int = 200_000) -> str:
         return path.read_bytes()[:limit].decode("utf-8", errors="replace")
     except Exception:
         return ""
-
-
-def scan_folder(folder: Path) -> list[str]:
-    findings: list[str] = []
-    for p in folder.rglob("*"):
-        if p.name in SKIP_SCAN_NAMES:
-            continue
-        if p.suffix.lower() in SKIP_SCAN_SUFFIXES:
-            continue
-        if any(part in SKIP_SCAN_PARTS for part in p.parts):
-            continue
-        if not p.is_file():
-            continue
-        if p.stat().st_size > 500_000:
-            continue
-        text = read_text(p)
-        lower = text.lower()
-        for pat in SUSPICIOUS_PATTERNS:
-            if re.search(pat, lower, flags=re.IGNORECASE):
-                findings.append(f"{p.relative_to(folder)}: `{pat}`")
-    # De-duplicate.
-    return list(dict.fromkeys(findings))
 
 
 def skill_name_from_frontmatter(skill_md: Path) -> str | None:
@@ -220,9 +186,104 @@ def print_post_install_guidance(installed: list[tuple[str, Path]]) -> None:
     print("If the current session does not see the new skill automatically, restart or reload the agent and use the exact invocation above.")
 
 
+def process_repo(args: argparse.Namespace, work: Path, repo_url: str, dest_targets: list[tuple[str, Path]]) -> int:
+    src = (work / args.skill_path).resolve()
+    if not str(src).startswith(str(work.resolve())):
+        raise ValueError("skill-path escapes repository root")
+    if not (src / "SKILL.md").exists():
+        possible = [str(p.relative_to(work)) for p in work.rglob("SKILL.md")]
+        print("Selected path does not contain SKILL.md.")
+        if possible:
+            print("Available SKILL.md paths:")
+            for p in possible[:20]:
+                print(" -", p)
+        return 2
+
+    source_name, _ = validate_skill_folder(src)
+    skill_name = args.name or source_name
+    commit = git_commit(work)
+    structured_findings = [] if args.skip_safety_scan else scan_risk_folder(src, max_size=500_000)
+    findings = finding_strings(structured_findings)
+    level = risk_level(structured_findings)
+    if findings and not args.json:
+        print("Safety scan warnings:")
+        for f in findings[:20]:
+            print(" -", f)
+    if findings and not args.dry_run and not args.yes:
+        ans = input("Continue installation anyway? Type 'yes' to continue: ").strip().lower()
+        if ans != "yes":
+            print("Installation cancelled.")
+            return 1
+
+    if args.dry_run:
+        destinations = [
+            {"agent": agent, "path": str(dest_root / skill_name), "exists": (dest_root / skill_name).exists()}
+            for agent, dest_root in dest_targets
+        ]
+        safety = {
+            "level": level,
+            "findings": structured_findings[:20],
+            "scan_skipped": bool(args.skip_safety_scan),
+        }
+        plan = {
+            "action": "dry_run_install",
+            "repo_url": repo_url,
+            "commit": commit,
+            "skill_path": args.skill_path,
+            "skill_name": skill_name,
+            "destinations": destinations,
+            "frontmatter_valid": True,
+            "safety": safety,
+            "would_copy_files": True,
+            "would_update_registry": False,
+        }
+        if args.json:
+            print(json.dumps(plan, ensure_ascii=False, indent=2))
+            return 0
+        print()
+        print("Dry-run install plan")
+        print(f"  Repository: {repo_url}")
+        print(f"  Commit: {commit or 'unknown'}")
+        print(f"  Skill path: {src.relative_to(work)}")
+        print(f"  Skill name: {skill_name}")
+        print("  Destination targets:")
+        for destination in destinations:
+            exists = "exists" if destination["exists"] else "new"
+            print(f"   - {destination['agent']}: {destination['path']} ({exists})")
+        if args.skip_safety_scan:
+            print("  Safety scan: skipped")
+        elif findings:
+            print(f"  Safety scan: {level} ({len(findings)} finding(s))")
+        else:
+            print("  Safety scan: no warnings")
+        print("Dry run only. No files were copied and no registry was updated.")
+        return 0
+
+    if not args.yes:
+        print(f"About to install {src.relative_to(work)} as {skill_name!r} into:")
+        for agent, dest_root in dest_targets:
+            print(f" - {agent}: {dest_root}")
+        ans = input("Type 'yes' to continue: ").strip().lower()
+        if ans != "yes":
+            print("Installation cancelled.")
+            return 1
+
+    installed: list[tuple[str, Path]] = []
+    for agent, dest_root in dest_targets:
+        dest = copy_skill(src, dest_root, args.name, args.force)
+        record_install(dest_root, dest, repo_url, args.skill_path, commit, findings, agent)
+        installed.append((agent, dest))
+        print(f"Installed skill to: {dest}")
+        print("Verify with:")
+        print(f"  head -40 {dest / 'SKILL.md'}")
+    print_post_install_guidance(installed)
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Install one selected Agent Skill folder from GitHub.")
-    ap.add_argument("repo", help="GitHub repo URL or OWNER/REPO")
+    ap.add_argument("repo", nargs="?", help="GitHub repo URL or OWNER/REPO")
+    ap.add_argument("--local-repo", help="Use a local repository or fixture directory instead of cloning GitHub")
     ap.add_argument("--skill-path", default=".", help="Path inside the repo that contains SKILL.md")
     ap.add_argument("--agent", choices=["codex", "claude", "both"], default="codex", help="Which local agent skill location to target")
     ap.add_argument("--dest", help="Destination skills directory. Defaults to ~/.agents/skills for Codex or ~/.claude/skills for Claude Code")
@@ -235,103 +296,23 @@ def main() -> int:
     args = ap.parse_args()
     if args.json and not args.dry_run:
         ap.error("--json is currently supported only with --dry-run")
-
-    repo_url = parse_repo_url(args.repo)
+    if not args.repo and not args.local_repo:
+        ap.error("repo is required unless --local-repo is provided")
     dest_targets = resolve_dest_targets(args.agent, args.dest)
 
+    if args.local_repo:
+        work = Path(args.local_repo).expanduser().resolve()
+        if not work.exists():
+            raise FileNotFoundError(f"Local repository does not exist: {work}")
+        return process_repo(args, work, f"local:{work}", dest_targets)
+
+    repo_url = parse_repo_url(args.repo)
     with tempfile.TemporaryDirectory(prefix="skill-install-") as td:
         work = Path(td) / "repo"
-        print(f"Cloning {repo_url} ...")
+        if not args.json:
+            print(f"Cloning {repo_url} ...")
         subprocess.run(["git", "clone", "--depth", "1", repo_url, str(work)], check=True)
-        src = (work / args.skill_path).resolve()
-        if not str(src).startswith(str(work.resolve())):
-            raise ValueError("skill-path escapes repository root")
-        if not (src / "SKILL.md").exists():
-            possible = [str(p.relative_to(work)) for p in work.rglob("SKILL.md")]
-            print("Selected path does not contain SKILL.md.")
-            if possible:
-                print("Available SKILL.md paths:")
-                for p in possible[:20]:
-                    print(" -", p)
-            return 2
-
-        source_name, _ = validate_skill_folder(src)
-        skill_name = args.name or source_name
-        commit = git_commit(work)
-        findings = [] if args.skip_safety_scan else scan_folder(src)
-        if findings:
-            print("Safety scan warnings:")
-            for f in findings[:20]:
-                print(" -", f)
-            if not args.dry_run and not args.yes:
-                ans = input("Continue installation anyway? Type 'yes' to continue: ").strip().lower()
-                if ans != "yes":
-                    print("Installation cancelled.")
-                    return 1
-
-        if args.dry_run:
-            destinations = [
-                {"agent": agent, "path": str(dest_root / skill_name), "exists": (dest_root / skill_name).exists()}
-                for agent, dest_root in dest_targets
-            ]
-            safety = {
-                "level": "warning" if findings else "ok",
-                "findings": findings[:20],
-                "scan_skipped": bool(args.skip_safety_scan),
-            }
-            plan = {
-                "action": "dry_run_install",
-                "repo_url": repo_url,
-                "commit": commit,
-                "skill_path": args.skill_path,
-                "skill_name": skill_name,
-                "destinations": destinations,
-                "frontmatter_valid": True,
-                "safety": safety,
-                "would_copy_files": True,
-                "would_update_registry": False,
-            }
-            if args.json:
-                print(json.dumps(plan, ensure_ascii=False, indent=2))
-                return 0
-            print()
-            print("Dry-run install plan")
-            print(f"  Repository: {repo_url}")
-            print(f"  Commit: {commit or 'unknown'}")
-            print(f"  Skill path: {src.relative_to(work)}")
-            print(f"  Skill name: {skill_name}")
-            print("  Destination targets:")
-            for destination in destinations:
-                exists = "exists" if destination["exists"] else "new"
-                print(f"   - {destination['agent']}: {destination['path']} ({exists})")
-            if args.skip_safety_scan:
-                print("  Safety scan: skipped")
-            elif findings:
-                print(f"  Safety scan: {len(findings)} warning(s)")
-            else:
-                print("  Safety scan: no warnings")
-            print("Dry run only. No files were copied and no registry was updated.")
-            return 0
-
-        if not args.yes:
-            print(f"About to install {src.relative_to(work)} as {skill_name!r} into:")
-            for agent, dest_root in dest_targets:
-                print(f" - {agent}: {dest_root}")
-            ans = input("Type 'yes' to continue: ").strip().lower()
-            if ans != "yes":
-                print("Installation cancelled.")
-                return 1
-
-        installed: list[tuple[str, Path]] = []
-        for agent, dest_root in dest_targets:
-            dest = copy_skill(src, dest_root, args.name, args.force)
-            record_install(dest_root, dest, repo_url, args.skill_path, commit, findings, agent)
-            installed.append((agent, dest))
-            print(f"Installed skill to: {dest}")
-            print("Verify with:")
-            print(f"  head -40 {dest / 'SKILL.md'}")
-        print_post_install_guidance(installed)
-        return 0
+        return process_repo(args, work, repo_url, dest_targets)
 
 if __name__ == "__main__":
     try:

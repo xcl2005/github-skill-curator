@@ -18,5 +18,5 @@ Only install the selected skill folder after review and user approval.
 
 ## Rejected examples
 
-- `owner/unsafe-installer-skill`: high: pattern `\.env|id_rsa|GITHUB_TOKEN|OPENAI_API_KEY|api[_-]?key`; medium: pattern `curl\s+[^\n|;]+\|\s*(sh|bash)`
-- `owner/always-run-skill`: high: pattern `(always|automatically) use this skill|use this skill for all tasks|for every task`
+- `owner/unsafe-installer-skill`: high: <text>: `\.env|id_rsa|GITHUB_TOKEN|OPENAI_API_KEY|api[_-]?key`; medium: <text>: `curl\s+[^\n|;]+\|\s*(sh|bash)`
+- `owner/always-run-skill`: high: <text>: `(always|automatically) use this skill|use this skill for all tasks|for every task`

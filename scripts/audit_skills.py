@@ -21,25 +21,7 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Iterable
 
-SUSPICIOUS_PATTERNS = [
-    ("high", r"ignore (all )?(previous|system|developer|user) instructions"),
-    ("high", r"exfiltrat(e|ion)|steal\s+(secret|token|key|credential)|credential\s+harvest|private key|ssh key|browser profile"),
-    ("high", r"\.env|id_rsa|GITHUB_TOKEN|OPENAI_API_KEY|api[_-]?key"),
-    ("high", r"rm\s+-rf\s+(/|~|\$HOME|\*)"),
-    ("medium", r"curl\s+[^\n|;]+\|\s*(sh|bash)"),
-    ("medium", r"wget\s+[^\n|;]+\|\s*(sh|bash)"),
-    ("medium", r"chmod\s+777|sudo\s+"),
-    ("medium", r"base64\s+-d|eval\s+\$|Invoke-Expression|iex\b"),
-]
-SKIP_SCAN_NAMES = {".gitignore", ".difyignore"}
-SKIP_SCAN_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico", ".pdf", ".pptx", ".docx", ".xlsx", ".pyc"}
-SKIP_SCAN_PARTS = {".git", "__pycache__", "node_modules", ".venv"}
-POLICY_DOCS = {
-    Path("SKILL.md"),
-    Path("references/governance.md"),
-    Path("references/scoring.md"),
-    Path("references/core-task-policy.md"),
-}
+from risk_scan import finding_strings, risk_level, scan_folder as shared_scan_folder
 
 OVERBROAD_DESCRIPTION_PATTERNS = [
     r"use (this skill )?for all tasks",
@@ -110,32 +92,9 @@ def parse_frontmatter(skill_md: Path) -> tuple[str, str]:
 
 
 def scan_folder(folder: Path) -> tuple[list[str], bool]:
-    findings: list[str] = []
-    high = False
-    for p in folder.rglob("*"):
-        try:
-            rel_path = p.relative_to(folder)
-        except ValueError:
-            rel_path = p
-        if folder.name == "github-skill-curator" and rel_path in POLICY_DOCS:
-            continue
-        if p.name in SKIP_SCAN_NAMES:
-            continue
-        if p.suffix.lower() in SKIP_SCAN_SUFFIXES:
-            continue
-        if any(part in SKIP_SCAN_PARTS for part in p.parts):
-            continue
-        if not p.is_file() or p.stat().st_size > 750_000:
-            continue
-        text = read_text(p)
-        for sev, pat in SUSPICIOUS_PATTERNS:
-            match = re.search(pat, text, flags=re.IGNORECASE)
-            if match and not is_policy_context(text, match.start(), match.end()):
-                rel = str(p.relative_to(folder))
-                findings.append(f"{sev}: {rel}: `{pat}`")
-                if sev == "high":
-                    high = True
-    return list(dict.fromkeys(findings)), high
+    structured = shared_scan_folder(folder, policy_context=is_policy_context)
+    findings = finding_strings(structured)
+    return findings, risk_level(structured) == "high"
 
 
 def is_broad_description(desc: str) -> bool:

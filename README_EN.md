@@ -98,6 +98,7 @@ See filled output samples:
 - [`examples/outputs/unsafe-skill-audit-report.md`](examples/outputs/unsafe-skill-audit-report.md)
 - [`examples/outputs/demo-curation-report.generated.md`](examples/outputs/demo-curation-report.generated.md)
 - [`examples/outputs/install-dry-run-report.sample.json`](examples/outputs/install-dry-run-report.sample.json)
+- [`examples/outputs/install-dry-run-unsafe.sample.json`](examples/outputs/install-dry-run-unsafe.sample.json)
 
 ## 👨‍💻 Use Cases
 

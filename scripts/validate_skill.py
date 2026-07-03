@@ -13,20 +13,26 @@ SKILL_NAME = "github-skill-curator"
 REQUIRED_FILES = [
     "SKILL.md",
     "skill_manifest.yaml",
+    "scripts/risk_scan.py",
     "scripts/curation_model.py",
     "scripts/demo_curate.py",
     "scripts/find_skills.py",
     "scripts/install_skill.py",
     "scripts/audit_skills.py",
+    "tests/test_curation_model.py",
     "references/risk_model.md",
     "examples/fixtures/sample-skill-index.json",
     "examples/outputs/demo-curation-report.generated.md",
+    "examples/outputs/install-dry-run-unsafe.sample.json",
 ]
 
 PROTECTED_SKILL_PHRASES = [
     "silently install unknown third-party skills",
     "run GitHub search for every small task",
     "install only after approval",
+    "Before recommend / install / use",
+    "scripts/risk_scan.py",
+    "Do not recommend high-risk candidates",
 ]
 
 REQUIRED_RISK_MODEL_PHRASES = [
@@ -109,6 +115,25 @@ def main() -> int:
     install_text = read("scripts/install_skill.py")
     if "--dry-run" not in install_text:
         errors.append("scripts/install_skill.py must support --dry-run")
+    if "--local-repo" not in install_text:
+        errors.append("scripts/install_skill.py must support --local-repo for fixture tests")
+    if "from risk_scan import" not in install_text:
+        errors.append("scripts/install_skill.py must use shared risk_scan")
+
+    audit_text = read("scripts/audit_skills.py")
+    if "from risk_scan import" not in audit_text:
+        errors.append("scripts/audit_skills.py must use shared risk_scan")
+
+    find_text = read("scripts/find_skills.py")
+    if "from curation_model import" not in find_text:
+        errors.append("scripts/find_skills.py must import the shared curation model")
+    for forbidden in ["class Candidate", "def score_repo", "SUSPICIOUS_PATTERNS", "def terms_from_task", "def scan_text_for_risks"]:
+        if forbidden in find_text:
+            errors.append(f"scripts/find_skills.py should not redefine shared model logic: {forbidden}")
+
+    demo_text = read("scripts/demo_curate.py")
+    if "candidate_from_fixture" not in demo_text:
+        errors.append("scripts/demo_curate.py must score fixtures through curation_model.candidate_from_fixture")
 
     for path in ["README.md", "README_EN.md"]:
         if read(path).count("|-- docs/") > 1:

@@ -1,0 +1,41 @@
+{
+  "action": "dry_run_install",
+  "repo_url": "local:examples/fixtures/unsafe-skill",
+  "commit": "local-fixture",
+  "skill_path": ".",
+  "skill_name": "unsafe-skill",
+  "destinations": [
+    {
+      "agent": "codex",
+      "path": "~/.agents/skills/unsafe-skill",
+      "exists": false
+    }
+  ],
+  "frontmatter_valid": true,
+  "safety": {
+    "level": "high",
+    "findings": [
+      {
+        "severity": "high",
+        "path": "SKILL.md",
+        "pattern": "(always|automatically) use this skill|use this skill for all tasks|for every task",
+        "message": "Overbroad trigger may hijack unrelated tasks"
+      },
+      {
+        "severity": "high",
+        "path": "scripts/install.sh",
+        "pattern": "\\.env|id_rsa|GITHUB_TOKEN|OPENAI_API_KEY|api[_-]?key",
+        "message": "Secret or private key access pattern"
+      },
+      {
+        "severity": "medium",
+        "path": "scripts/install.sh",
+        "pattern": "curl\\s+[^\\n|;]+\\|\\s*(sh|bash)",
+        "message": "Opaque remote installer"
+      }
+    ],
+    "scan_skipped": false
+  },
+  "would_copy_files": true,
+  "would_update_registry": false
+}

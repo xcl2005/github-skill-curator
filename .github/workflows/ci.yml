@@ -16,9 +16,13 @@ jobs:
         run: python scripts/validate_readme_quality.py
       - name: Validate skill package
         run: python scripts/validate_skill.py
+      - name: Run curation model unit tests
+        run: python -m unittest discover -s tests
       - name: Regenerate committed curator demo
         run: python scripts/demo_curate.py --fixture examples/fixtures/sample-skill-index.json --out examples/outputs/demo-curation-report.generated.md
       - name: Ensure curator demo output is committed
         run: git diff --exit-code examples/outputs/demo-curation-report.generated.md
+      - name: Run local installer dry-run fixture
+        run: python scripts/install_skill.py --local-repo examples/fixtures/unsafe-skill --skill-path . --dry-run --json
       - name: Run unsafe fixture audit
         run: python scripts/audit_skills.py audit --dest examples/fixtures

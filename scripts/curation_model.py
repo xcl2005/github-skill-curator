@@ -8,23 +8,12 @@ import re
 from dataclasses import dataclass
 from typing import Any
 
+from risk_scan import risk_level, safety_label, scan_text_for_risks
 
 STOPWORDS = {
     "the", "a", "an", "and", "or", "to", "for", "of", "in", "on", "with", "by", "from",
     "skill", "skills", "codex", "agent", "agents", "github", "use", "make", "create", "build",
 }
-
-SUSPICIOUS_PATTERNS = [
-    ("high", r"ignore (all )?(previous|system|developer|user) instructions"),
-    ("high", r"exfiltrat(e|ion)|steal\s+(secret|token|key|credential)|credential\s+harvest|private key|ssh key|browser profile"),
-    ("high", r"\.env|id_rsa|GITHUB_TOKEN|OPENAI_API_KEY|api[_-]?key"),
-    ("high", r"rm\s+-rf\s+(/|~|\$HOME|\*)"),
-    ("high", r"(always|automatically) use this skill|use this skill for all tasks|for every task"),
-    ("medium", r"curl\s+[^\n|;]+\|\s*(sh|bash)"),
-    ("medium", r"wget\s+[^\n|;]+\|\s*(sh|bash)"),
-    ("medium", r"chmod\s+777|sudo\s+"),
-    ("medium", r"base64\s+-d|eval\s+\$|Invoke-Expression|iex\b"),
-]
 
 TIER_RANK = {"strict": 3, "relaxed": 2, "exploratory": 1, "reject": 0}
 
@@ -84,32 +73,6 @@ def terms_from_task(task: str) -> list[str]:
         if sl not in terms:
             terms.append(sl)
     return terms[:12]
-
-
-def scan_text_for_risks(text: str) -> list[str]:
-    findings: list[str] = []
-    lower = text.lower()
-    for sev, pat in SUSPICIOUS_PATTERNS:
-        if re.search(pat, lower, flags=re.IGNORECASE):
-            findings.append(f"{sev}: pattern `{pat}`")
-    return list(dict.fromkeys(findings))
-
-
-def risk_level(findings: list[str]) -> str:
-    if any(f.startswith("high") for f in findings):
-        return "high"
-    if any(f.startswith("medium") for f in findings):
-        return "medium"
-    return "ok"
-
-
-def safety_label(findings: list[str]) -> str:
-    level = risk_level(findings)
-    if level == "high":
-        return "High risk"
-    if level == "medium":
-        return "Warning"
-    return "OK"
 
 
 def days_since(iso: str) -> int:
